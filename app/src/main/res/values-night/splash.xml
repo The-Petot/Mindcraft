@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Mindcraft.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#000000</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splashscreen</item>
+        <item name="postSplashScreenTheme">@style/Theme.Mindcraft</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+    </style>
+</resources>
