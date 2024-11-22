@@ -5,5 +5,11 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Mindcraft" parent="Base.Theme.Mindcraft" />
+    <style name="Theme.Mindcraft" parent="Base.Theme.Mindcraft">
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+        <!--    TODO: Make splash screen icon animated.    -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splashscreen</item>
+        <item name="postSplashScreenTheme">@style/Theme.Mindcraft</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+    </style>
 </resources>
