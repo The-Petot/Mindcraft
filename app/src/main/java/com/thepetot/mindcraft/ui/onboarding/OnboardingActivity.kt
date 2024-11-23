@@ -1,5 +1,6 @@
 package com.thepetot.mindcraft.ui.onboarding
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -9,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.thepetot.mindcraft.databinding.ActivityOnboardingBinding
+import com.thepetot.mindcraft.ui.login.LoginActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -40,7 +42,6 @@ class OnboardingActivity : AppCompatActivity() {
         viewPager.adapter = onboardingAdapter
         dotsIndicator.attachTo(viewPager)
 
-        // Add page change callback to manage button visibility
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -50,15 +51,17 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun setupButtonListeners() {
-        // Next button functionality
         binding.btnNext.setOnClickListener {
             val nextPage = viewPager.currentItem + 1
             if (nextPage < (viewPager.adapter?.itemCount ?: 0)) {
                 viewPager.currentItem = nextPage
+            } else {
+                val loginIntent = Intent(this, LoginActivity::class.java)
+                startActivity(loginIntent)
+                finish()
             }
         }
 
-        // Back button functionality
         binding.btnBack.setOnClickListener {
             val previousPage = viewPager.currentItem - 1
             if (previousPage >= 0) {
@@ -68,7 +71,6 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun updateButtonVisibility(position: Int) {
-        // Hide back button on the first page
         binding.btnBack.visibility = if (position == 0) View.GONE else View.VISIBLE
     }
 }
