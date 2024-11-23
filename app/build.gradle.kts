@@ -40,6 +40,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        viewBinding = true
         buildConfig = true
     }
 }
@@ -57,4 +58,10 @@ dependencies {
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
+
+    // ViewPager2
+    implementation(libs.androidx.viewpager2)
+
+    // Pager Dots Indicator
+    implementation(libs.dotsindicator)
 }

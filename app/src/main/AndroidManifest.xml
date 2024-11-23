@@ -11,9 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_mindcraft_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mindcraft"
-        tools:targetApi="31">
+        tools:targetApi="35">
         <activity
-            android:name=".ui.onboarding.MainActivity"
+            android:name=".ui.onboarding.OnboardingActivity"
             android:exported="true"
             android:theme="@style/Theme.Mindcraft.Splash">
             <intent-filter>
