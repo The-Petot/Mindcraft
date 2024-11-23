@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Mindcraft</string>
+    <string name="btn_back_onboarding">Back button onboarding</string>
+    <string name="btn_next_onboarding">Next button onboarding</string>
+    <string name="first_onboarding_desc">\"Empowering minds, crafting futures—MindCraft transforms learning into a journey of growth, resilience, and discovery.\"</string>
+    <string name="second_onboarding_desc">\"Every student is unique, and so is their learning journey. MindCraft adapts to you, for you.\"</string>
+    <string name="third_onboarding_desc">\"Where knowledge meets care—unlock your potential with MindCraft’s tailored support.\"</string>
 </resources>
