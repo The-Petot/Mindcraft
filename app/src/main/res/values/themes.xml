@@ -3,13 +3,15 @@
     <style name="Base.Theme.Mindcraft" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="fontFamily">@font/roboto</item>
     </style>
 
-    <style name="Theme.Mindcraft" parent="Base.Theme.Mindcraft">
-        <item name="windowSplashScreenBackground">#FFFFFF</item>
-        <!--    TODO: Make splash screen icon animated.    -->
+    <style name="Theme.Mindcraft" parent="Base.Theme.Mindcraft" />
+
+    <!--    TODO: Make splash screen icon animated.    -->
+    <style name="Theme.Mindcraft.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">?attr/colorSurface</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splashscreen</item>
         <item name="postSplashScreenTheme">@style/Theme.Mindcraft</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item>
     </style>
 </resources>
