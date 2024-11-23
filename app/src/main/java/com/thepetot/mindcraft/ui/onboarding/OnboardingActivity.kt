@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.thepetot.mindcraft.databinding.ActivityOnboardingBinding
 import com.thepetot.mindcraft.ui.login.LoginActivity
+import com.thepetot.mindcraft.ui.main.MainActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -56,7 +57,7 @@ class OnboardingActivity : AppCompatActivity() {
             if (nextPage < (viewPager.adapter?.itemCount ?: 0)) {
                 viewPager.currentItem = nextPage
             } else {
-                val loginIntent = Intent(this, LoginActivity::class.java)
+                val loginIntent = Intent(this, MainActivity::class.java)
                 startActivity(loginIntent)
                 finish()
             }
