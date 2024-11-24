@@ -24,10 +24,6 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.home.quiz.detail.DetailQuizActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
