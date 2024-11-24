@@ -1,5 +1,6 @@
 package com.thepetot.mindcraft.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
 import com.thepetot.mindcraft.databinding.FragmentHomeBinding
 import com.thepetot.mindcraft.ui.adapter.QuizHistoryAdapter
+import com.thepetot.mindcraft.ui.home.quiz.add.AddQuizActivity
 import com.thepetot.mindcraft.utils.generateDummyData
 
 class HomeFragment : Fragment() {
@@ -36,11 +38,18 @@ class HomeFragment : Fragment() {
         }
 
         quizHistoryAdapter.submitList(generateDummyData(10))
+
+        binding.btnAddQuiz.setOnClickListener { addNewQuiz() }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun addNewQuiz() {
+        val addNewQuizIntent = Intent(context, AddQuizActivity::class.java)
+        startActivity(addNewQuizIntent)
     }
 
 }
