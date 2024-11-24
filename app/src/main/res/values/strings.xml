@@ -5,6 +5,10 @@
     <string name="first_onboarding_desc">\"Empowering minds, crafting futures—MindCraft transforms learning into a journey of growth, resilience, and discovery.\"</string>
     <string name="second_onboarding_desc">\"Every student is unique, and so is their learning journey. MindCraft adapts to you, for you.\"</string>
     <string name="third_onboarding_desc">\"Where knowledge meets care—unlock your potential with MindCraft’s tailored support.\"</string>
+    <string name="title_home">Home</string>
+    <string name="title_ranking">Ranking</string>
+    <string name="title_settings">Settings</string>
+    <string name="text_dummy">Lorem ipsum odor amet, consectetuer adipiscing elit. Quisque vulputate lectus faucibus mattis consequat mollis. Ridiculus vehicula tristique dolor dignissim tellus bibendum tortor. Tellus dictumst egestas laoreet metus mus velit phasellus. Aliquam inceptos vitae magnis integer habitant dui ornare ridiculus. Dis nibh hac justo, aliquam lacus aenean nam potenti. Placerat curae fringilla diam ad phasellus cras libero. Aliquet nam odio consectetur lectus congue ultricies viverra leo.</string>
 
     <string name="logo_image_view">logo_image_view</string>
     <string name="login">Login</string>
@@ -16,10 +20,4 @@
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="already_have_an_account">Already have an account?</string>
-
-
-
-
-
-
 </resources>
