@@ -11,6 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_mindcraft_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mindcraft"
+        android:screenOrientation="portrait"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="35">
         <activity
             android:name=".ui.main.MainActivity"

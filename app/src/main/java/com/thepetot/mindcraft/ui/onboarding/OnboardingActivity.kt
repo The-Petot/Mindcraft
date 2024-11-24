@@ -10,7 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.thepetot.mindcraft.databinding.ActivityOnboardingBinding
-import com.thepetot.mindcraft.ui.login.LoginActivity
+import com.thepetot.mindcraft.ui.adapter.OnboardingAdapter
 import com.thepetot.mindcraft.ui.main.MainActivity
 
 class OnboardingActivity : AppCompatActivity() {
@@ -19,9 +19,9 @@ class OnboardingActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         installSplashScreen()
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
