@@ -1,6 +1,8 @@
 package com.thepetot.mindcraft.data.remote.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class QuizHistoryResponse(
 
@@ -14,6 +16,7 @@ data class QuizHistoryResponse(
 	val status: String
 )
 
+@Parcelize
 data class ListQuizItem(
 
 	@field:SerializedName("duration")
@@ -36,4 +39,4 @@ data class ListQuizItem(
 
 	@field:SerializedName("title")
 	val title: String
-)
+) : Parcelable

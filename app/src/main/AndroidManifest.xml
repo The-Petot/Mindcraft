@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Mindcraft"
         tools:targetApi="35">
         <activity
-            android:name=".ui.home.quiz.start.StartQuizActivity"
+            android:name=".ui.home.quiz.detail.DetailQuizActivity"
             android:exported="false" />
         <activity
             android:name=".ui.home.quiz.add.AddQuizActivity"

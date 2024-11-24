@@ -11,9 +11,11 @@ import com.thepetot.mindcraft.data.remote.response.ListQuizItem
 import com.thepetot.mindcraft.databinding.FragmentHomeBinding
 import com.thepetot.mindcraft.ui.adapter.QuizHistoryAdapter
 import com.thepetot.mindcraft.ui.home.quiz.add.AddQuizActivity
+import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity
+import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity.Companion.QUIZ_EXTRA
 import com.thepetot.mindcraft.utils.generateDummyData
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +33,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val quizHistoryAdapter = QuizHistoryAdapter()
+        val quizHistoryAdapter = QuizHistoryAdapter(this)
         binding.rvQuiz.apply {
             adapter = quizHistoryAdapter
             layoutManager = LinearLayoutManager(context)
@@ -45,6 +47,12 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onQuizClicked(quiz: ListQuizItem) {
+        val quizDetailIntent = Intent(context, DetailQuizActivity::class.java)
+        quizDetailIntent.putExtra(QUIZ_EXTRA, quiz)
+        startActivity(quizDetailIntent)
     }
 
     private fun addNewQuiz() {
