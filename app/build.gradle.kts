@@ -64,4 +64,10 @@ dependencies {
 
     // Pager Dots Indicator
     implementation(libs.dotsindicator)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+
+    implementation (libs.androidx.datastore.preferences)
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="corner_radius">8dp</dimen>
+    <dimen name="edittext_padding_horizontal">16dp</dimen>
+    <dimen name="edittext_padding_vertical">12dp</dimen>
+    <dimen name="corner_radius2">16dp</dimen>
+    <dimen name="edittext_padding_horizontal2">16dp</dimen>
+    <dimen name="edittext_padding_vertical2">12dp</dimen>
+    <dimen name="edittext_min_height">200dp</dimen>
+
+</resources>
