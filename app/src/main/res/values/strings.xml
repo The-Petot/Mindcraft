@@ -9,4 +9,15 @@
     <string name="title_ranking">Ranking</string>
     <string name="title_settings">Settings</string>
     <string name="text_dummy">Lorem ipsum odor amet, consectetuer adipiscing elit. Quisque vulputate lectus faucibus mattis consequat mollis. Ridiculus vehicula tristique dolor dignissim tellus bibendum tortor. Tellus dictumst egestas laoreet metus mus velit phasellus. Aliquam inceptos vitae magnis integer habitant dui ornare ridiculus. Dis nibh hac justo, aliquam lacus aenean nam potenti. Placerat curae fringilla diam ad phasellus cras libero. Aliquet nam odio consectetur lectus congue ultricies viverra leo.</string>
+
+    <string name="logo_image_view">logo_image_view</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="or">Or</string>
+    <string name="new_to_mindcraft">New to Mindcraft?</string>
+    <string name="register">Register</string>
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="already_have_an_account">Already have an account?</string>
 </resources>
