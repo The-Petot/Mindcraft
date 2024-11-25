@@ -20,4 +20,7 @@
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="login_underline"><u>Login</u></string>
+    <string name="signup_underline"><u>Sign Up</u></string>
 </resources>
