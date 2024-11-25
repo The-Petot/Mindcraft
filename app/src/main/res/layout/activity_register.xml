@@ -44,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="12dp">
 
-        <com.thepetot.mindcraft.ui.customview.NameEditText
+        <com.thepetot.mindcraft.ui.custom.NameEditText
             android:id="@+id/firstNameEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteY="16dp" />
 
-        <com.thepetot.mindcraft.ui.customview.NameEditText
+        <com.thepetot.mindcraft.ui.custom.NameEditText
             android:id="@+id/lastNameEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Email Field -->
-    <com.thepetot.mindcraft.ui.customview.EmailEditText
+    <com.thepetot.mindcraft.ui.custom.EmailEditText
         android:id="@+id/emailEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
 
     <!-- Already Have an Account Section -->
 
-    <com.thepetot.mindcraft.ui.customview.PasswordEditText
+    <com.thepetot.mindcraft.ui.custom.PasswordEditText
         android:id="@+id/passwordEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

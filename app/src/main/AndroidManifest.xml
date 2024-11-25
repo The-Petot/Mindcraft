@@ -28,7 +28,7 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.register.RegisterActivity"
+            android:name=".ui.signup.RegisterActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

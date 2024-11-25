@@ -1,4 +1,4 @@
-package com.thepetot.mindcraft.ui.customview
+package com.thepetot.mindcraft.ui.custom
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable

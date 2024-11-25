@@ -1,4 +1,4 @@
-package com.thepetot.mindcraft.ui.customview
+package com.thepetot.mindcraft.ui.custom
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
@@ -9,9 +9,10 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import com.thepetot.mindcraft.R
 
-class PasswordEditText: AppCompatEditText {
+class EmailEditText: AppCompatEditText {
+    private var isEmailValid = true
 
-    constructor(context: Context): super(context) {
+    constructor(context: Context) : super(context) {
         setup()
         init()
     }
@@ -51,21 +52,21 @@ class PasswordEditText: AppCompatEditText {
     }
 
     private fun init() {
-        addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            override fun onTextChanged(password: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (password?.length?.toInt()!! < 8) {
-                    setError("Password yang anda buat harus lebih dari 8 karakter")
+            override fun afterTextChanged(s: Editable?) {
+                isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString().trim()).matches()
+
+                if (!isEmailValid) {
+
+                    setError("Format email salah")
+                } else {
+                    setError(null)
                 }
             }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
         })
     }
 

@@ -14,8 +14,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.thepetot.mindcraft.databinding.ActivityLoginBinding
-import com.thepetot.mindcraft.pref.UserModel
-import com.thepetot.mindcraft.pref.UserPreference
+import com.thepetot.mindcraft.data.pref.UserModel
+import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.ui.ViewModelFactory
 import com.thepetot.mindcraft.ui.main.MainActivity
 

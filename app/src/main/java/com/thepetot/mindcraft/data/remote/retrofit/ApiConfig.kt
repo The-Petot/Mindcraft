@@ -1,4 +1,4 @@
-package com.thepetot.mindcraft.remote.retrofit
+package com.thepetot.mindcraft.data.remote.retrofit
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

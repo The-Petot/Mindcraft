@@ -1,14 +1,14 @@
-package com.thepetot.mindcraft.ui.register
+package com.thepetot.mindcraft.ui.signup
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thepetot.mindcraft.pref.UserModel
-import com.thepetot.mindcraft.pref.UserPreference
-import com.thepetot.mindcraft.remote.response.RegisterResponse
-import com.thepetot.mindcraft.remote.retrofit.ApiConfig
+import com.thepetot.mindcraft.data.pref.UserModel
+import com.thepetot.mindcraft.data.pref.UserPreference
+import com.thepetot.mindcraft.data.remote.response.RegisterResponse
+import com.thepetot.mindcraft.data.remote.retrofit.ApiConfig
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback

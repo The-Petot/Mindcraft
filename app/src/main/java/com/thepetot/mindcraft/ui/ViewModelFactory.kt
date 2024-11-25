@@ -2,9 +2,9 @@ package com.thepetot.mindcraft.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.thepetot.mindcraft.pref.UserPreference
+import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.ui.login.LoginViewModel
-import com.thepetot.mindcraft.ui.register.RegisterViewModel
+import com.thepetot.mindcraft.ui.signup.RegisterViewModel
 
 class ViewModelFactory(private val pref: UserPreference) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")

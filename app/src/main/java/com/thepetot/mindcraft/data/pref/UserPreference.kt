@@ -1,4 +1,4 @@
-package com.thepetot.mindcraft.pref
+package com.thepetot.mindcraft.data.pref
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -82,7 +82,7 @@ class UserPreference private constructor(private val dataStore: DataStore<androi
 
 
         fun getInstance(dataStore: DataStore<androidx.datastore.preferences.core.Preferences>): UserPreference {
-            return INSTANCE?: synchronized(this) {
+            return INSTANCE ?: synchronized(this) {
                 val instance = UserPreference(dataStore)
                 INSTANCE = instance
                 instance

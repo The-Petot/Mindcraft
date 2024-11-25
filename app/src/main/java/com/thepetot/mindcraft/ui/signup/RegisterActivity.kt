@@ -1,4 +1,4 @@
-package com.thepetot.mindcraft.ui.register
+package com.thepetot.mindcraft.ui.signup
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -12,7 +12,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.thepetot.mindcraft.databinding.ActivityRegisterBinding
-import com.thepetot.mindcraft.pref.UserPreference
+import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.ui.ViewModelFactory
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")

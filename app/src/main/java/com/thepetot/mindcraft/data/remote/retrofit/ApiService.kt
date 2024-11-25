@@ -1,7 +1,7 @@
-package com.thepetot.mindcraft.remote.retrofit
+package com.thepetot.mindcraft.data.remote.retrofit
 
-import com.thepetot.mindcraft.remote.response.LoginResponse
-import com.thepetot.mindcraft.remote.response.RegisterResponse
+import com.thepetot.mindcraft.data.remote.response.LoginResponse
+import com.thepetot.mindcraft.data.remote.response.RegisterResponse
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

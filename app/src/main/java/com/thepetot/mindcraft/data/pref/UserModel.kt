@@ -1,4 +1,4 @@
-package com.thepetot.mindcraft.pref
+package com.thepetot.mindcraft.data.pref
 
 data class UserModel(
     val firstName: String,
