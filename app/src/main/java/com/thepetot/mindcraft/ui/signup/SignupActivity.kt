@@ -37,9 +37,7 @@ class SignupActivity : AppCompatActivity() {
             contentDescription = "Used for login"
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
             setOnClickListener {
-                val loginIntent = Intent(context, LoginActivity::class.java)
-                loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                startActivity(loginIntent)
+                finish()
             }
         }
     }

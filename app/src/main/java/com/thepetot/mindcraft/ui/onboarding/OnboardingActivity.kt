@@ -65,16 +65,9 @@ class OnboardingActivity : AppCompatActivity() {
         })
 
         viewPager.setPageTransformer { page, position ->
-            // Apply translation
             page.translationX = -position * page.width
-
-            // Adjust alpha for fade effect
             page.alpha = 1 - abs(position)
-
-            // Custom Bezier curve for slower transition
             val interpolator = PathInterpolator(0.2f, 0f, 0.8f, 1f) // Adjusted for a flatter curve
-
-            // Apply interpolation
             val interpolatedPosition = interpolator.getInterpolation(abs(position))
             page.translationX *= interpolatedPosition
         }

@@ -30,7 +30,6 @@ class LoginActivity : AppCompatActivity() {
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
             setOnClickListener {
                 val signupIntent = Intent(context, SignupActivity::class.java)
-                signupIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 startActivity(signupIntent)
             }
         }

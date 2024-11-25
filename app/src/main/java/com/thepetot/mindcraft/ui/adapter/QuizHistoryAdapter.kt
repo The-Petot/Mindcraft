@@ -6,8 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
-import com.thepetot.mindcraft.databinding.ItemQuizBinding
-
+import com.thepetot.mindcraft.databinding.ItemQuizHistoryBinding
 
 
 class QuizHistoryAdapter(
@@ -21,7 +20,7 @@ class QuizHistoryAdapter(
     }
 
     class QuizViewHolder(
-        private val binding: ItemQuizBinding,
+        private val binding: ItemQuizHistoryBinding,
         private val listener: OnQuizClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(quiz: ListQuizItem) {
@@ -35,7 +34,7 @@ class QuizHistoryAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuizViewHolder {
-        val binding = ItemQuizBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemQuizHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return QuizViewHolder(binding, listener)
     }
 

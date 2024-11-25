@@ -3,12 +3,18 @@ package com.thepetot.mindcraft.utils
 import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.viewpager2.widget.ViewPager2
+import com.thepetot.mindcraft.data.remote.response.ListQuestionsItem
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
+import com.thepetot.mindcraft.data.remote.response.Options
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
+
 
 fun generateDummyData(count: Int): List<ListQuizItem> {
 
@@ -33,12 +39,130 @@ fun generateDummyData(count: Int): List<ListQuizItem> {
     }
 }
 
+fun generateDummyQuizItems(): List<ListQuizItem> {
+    return listOf(
+        ListQuizItem(
+            duration = 5,
+            createdAt = "2024-01-01T08:00:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "What is the capital of France?",
+            id = "1",
+            title = "Capital Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:05:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "Which planet is known as the Red Planet?",
+            id = "2",
+            title = "Planetary Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:10:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "What is the largest mammal in the world?",
+            id = "3",
+            title = "Animal Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:15:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "What is the chemical symbol for water?",
+            id = "4",
+            title = "Chemistry Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:20:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "Who wrote 'Romeo and Juliet'?",
+            id = "5",
+            title = "Literature Quiz"
+        )
+    )
+}
+
+fun generateDummyQuestions(): List<ListQuestionsItem> {
+    return listOf(
+        ListQuestionsItem(
+            question = "What is the capital of France?",
+            options = Options(
+                a = "Paris",
+                b = "London",
+                c = "Berlin",
+                d = "Madrid"
+            ),
+            correctAnswer = "A",
+            explanation = "Paris is the capital of France."
+        ),
+        ListQuestionsItem(
+            question = "Which planet is known as the Red Planet?",
+            options = Options(
+                a = "Earth",
+                b = "Mars",
+                c = "Jupiter",
+                d = "Venus"
+            ),
+            correctAnswer = "B",
+            explanation = "Mars is known as the Red Planet because of its reddish appearance."
+        ),
+        ListQuestionsItem(
+            question = "What is the largest mammal in the world?",
+            options = Options(
+                a = "Elephant",
+                b = "Whale Shark",
+                c = "Blue Whale",
+                d = "Giraffe"
+            ),
+            correctAnswer = "C",
+            explanation = "The Blue Whale is the largest mammal in the world."
+        ),
+        ListQuestionsItem(
+            question = "What is the chemical symbol for water?",
+            options = Options(
+                a = "O2",
+                b = "H2",
+                c = "H2O",
+                d = "HO"
+            ),
+            correctAnswer = "C",
+            explanation = "H2O is the chemical formula for water."
+        ),
+        ListQuestionsItem(
+            question = "Who wrote 'Romeo and Juliet'?",
+            options = Options(
+                a = "Charles Dickens",
+                b = "William Shakespeare",
+                c = "Mark Twain",
+                d = "Jane Austen"
+            ),
+            correctAnswer = "B",
+            explanation = "William Shakespeare is the author of 'Romeo and Juliet.'"
+        )
+    )
+}
+
+
+
 fun formatDuration(duration: Int): String {
     return if (duration < 60) {
         "$duration seconds"
     } else {
         "${duration / 60} minutes"
     }
+}
+
+fun formatSecondsToTimer(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
 }
 
 fun String.withDateFormat(): String {
@@ -71,4 +195,27 @@ fun ViewPager2.setCurrentItem(
     animator.interpolator = interpolator
     animator.duration = duration
     animator.start()
+}
+
+fun getBitmapFromBase64(base64String: String): Bitmap {
+    val decodedString: ByteArray =
+        Base64.decode(base64String.split(",".toRegex()).dropLastWhile { it.isEmpty() }
+            .toTypedArray()[1], Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+}
+
+fun decodeBase64ToBitmap(base64String: String): Bitmap? {
+    return try {
+        // Remove any "data:image/png;base64," prefix if present
+        val cleanBase64 = base64String.replace("data:image/png;base64,", "")
+
+        // Decode the Base64 string into a byte array
+        val decodedBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+
+        // Convert the byte array into a Bitmap
+        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    } catch (e: IllegalArgumentException) {
+        e.printStackTrace()
+        null
+    }
 }

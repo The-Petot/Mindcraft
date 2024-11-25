@@ -14,6 +14,7 @@ import com.thepetot.mindcraft.ui.home.quiz.add.AddQuizActivity
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity.Companion.QUIZ_EXTRA
 import com.thepetot.mindcraft.utils.generateDummyData
+import com.thepetot.mindcraft.utils.generateDummyQuizItems
 
 class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
 
@@ -39,7 +40,7 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
             layoutManager = LinearLayoutManager(context)
         }
 
-        quizHistoryAdapter.submitList(generateDummyData(10))
+        quizHistoryAdapter.submitList(generateDummyQuizItems())
 
         binding.btnAddQuiz.setOnClickListener { addNewQuiz() }
     }
