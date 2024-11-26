@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.thepetot.mindcraft.databinding.ActivityLoginBinding
 import com.thepetot.mindcraft.data.pref.UserModel
 import com.thepetot.mindcraft.ui.main.MainActivity
@@ -21,7 +22,24 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupView()
         setupButton()
+    }
+
+    private fun setupView() {
+        binding.etEmail.doOnTextChanged { text, _, _, _ ->
+            if (text != null && !android.util.Patterns.EMAIL_ADDRESS.matcher(text).matches()) {
+                binding.etLayoutEmail.error = "Invalid email"
+            } else {
+                binding.etLayoutEmail.error = null
+            }
+        }
+
+        binding.etPassword.doOnTextChanged { text, _, _, _ ->
+            if (!text.isNullOrEmpty()) {
+                binding.etLayoutPassword.error = null
+            }
+        }
     }
 
     private fun setupButton() {
@@ -35,9 +53,22 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
-            finish()
+            when {
+                binding.etLayoutEmail.error != null || binding.etEmail.text.isNullOrEmpty() -> {
+                    binding.etEmail.requestFocus()
+                    binding.etLayoutEmail.error = binding.etLayoutEmail.error ?: "Email is required"
+                }
+                binding.etPassword.text.isNullOrEmpty() -> {
+                    binding.etPassword.requestFocus()
+                    binding.etLayoutPassword.error = binding.etLayoutPassword.error ?: "Password is required"
+                }
+                else -> {
+                    // TODO: Implement actual login mechanism
+                    val mainIntent = Intent(this, MainActivity::class.java)
+                    startActivity(mainIntent)
+                    finish()
+                }
+            }
         }
     }
 }

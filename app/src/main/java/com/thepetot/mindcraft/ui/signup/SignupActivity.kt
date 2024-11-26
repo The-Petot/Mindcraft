@@ -1,21 +1,11 @@
 package com.thepetot.mindcraft.ui.signup
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import com.thepetot.mindcraft.data.pref.UserPreference
+import androidx.core.widget.doOnTextChanged
 import com.thepetot.mindcraft.databinding.ActivitySignupBinding
-import com.thepetot.mindcraft.ui.ViewModelFactory
-import com.thepetot.mindcraft.ui.login.LoginActivity
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
@@ -27,9 +17,54 @@ class SignupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        setupViewModel()
+        setupView()
         setupButton()
+    }
+
+    private fun setupView() {
+        binding.etFirstName.doOnTextChanged { text, _, _, _ ->
+            text?.let {
+                if (!it.matches("^[a-zA-Z]*$".toRegex())) {
+                    binding.etLayoutFirstName.error = "Only letters"
+                } else {
+                    binding.etLayoutFirstName.error = null
+                }
+            }
+        }
+
+        binding.etLastName.doOnTextChanged { text, _, _, _ ->
+            text?.let {
+                if (!it.matches("^[a-zA-Z]*$".toRegex())) {
+                    binding.etLayoutLastName.error = "Only letters"
+                } else {
+                    binding.etLayoutLastName.error = null
+                }
+            }
+        }
+
+        binding.etEmail.doOnTextChanged { text, _, _, _ ->
+            if (text != null && !android.util.Patterns.EMAIL_ADDRESS.matcher(text).matches()) {
+                binding.etLayoutEmail.error = "Invalid email"
+            } else {
+                binding.etLayoutEmail.error = null
+            }
+        }
+
+        binding.etPassword.doOnTextChanged { text, _, _, _ ->
+            if (text != null && text.length < 8) {
+                binding.etLayoutPassword.error = "Minimum 8 characters"
+            } else {
+                binding.etLayoutPassword.error = null
+            }
+        }
+
+        binding.etConfirmPassword.doOnTextChanged { text, _, _, _ ->
+            if (text != null && text.toString() != binding.etPassword.text.toString()) {
+                binding.etLayoutConfirmPassword.error = "Password doesn't match"
+            } else {
+                binding.etLayoutConfirmPassword.error = null
+            }
+        }
     }
 
     private fun setupButton() {
@@ -40,15 +75,35 @@ class SignupActivity : AppCompatActivity() {
                 finish()
             }
         }
-    }
 
-
-
-    private fun setupViewModel() {
-        signupViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(UserPreference.getInstance(dataStore))
-        )[SignupViewModel::class.java]
+        binding.btnSignup.setOnClickListener {
+            when {
+                binding.etLayoutFirstName.error != null || binding.etFirstName.text.isNullOrEmpty() -> {
+                    binding.etFirstName.requestFocus()
+                    binding.etLayoutFirstName.error = binding.etLayoutFirstName.error ?: "First Name is required"
+                }
+                binding.etLayoutLastName.error != null || binding.etLastName.text.isNullOrEmpty() -> {
+                    binding.etLastName.requestFocus()
+                    binding.etLayoutLastName.error = binding.etLayoutLastName.error ?: "Last Name is required"
+                }
+                binding.etLayoutEmail.error != null || binding.etEmail.text.isNullOrEmpty() -> {
+                    binding.etEmail.requestFocus()
+                    binding.etLayoutEmail.error = binding.etLayoutEmail.error ?: "Email is required"
+                }
+                binding.etLayoutPassword.error != null || binding.etPassword.text.isNullOrEmpty() -> {
+                    binding.etPassword.requestFocus()
+                    binding.etLayoutPassword.error = binding.etLayoutPassword.error ?: "Password is required"
+                }
+                binding.etLayoutConfirmPassword.error != null || binding.etConfirmPassword.text.isNullOrEmpty() -> {
+                    binding.etConfirmPassword.requestFocus()
+                    binding.etLayoutConfirmPassword.error = binding.etLayoutConfirmPassword.error ?: "Confirm Password is required"
+                }
+                else -> {
+                    // TODO: Implement actual signup mechanism
+                    finish()
+                }
+            }
+        }
     }
 
 }
