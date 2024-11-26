@@ -1,26 +1,17 @@
 package com.thepetot.mindcraft.data.remote.retrofit
 
-import com.thepetot.mindcraft.data.remote.response.LoginResponse
-import com.thepetot.mindcraft.data.remote.response.RegisterResponse
-import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
+import com.thepetot.mindcraft.data.remote.response.login.LoginBody
+import com.thepetot.mindcraft.data.remote.response.login.LoginResponse
+import com.thepetot.mindcraft.data.remote.response.signup.SignupBody
+import com.thepetot.mindcraft.data.remote.response.signup.SignupResponse
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ApiService {
-    @FormUrlEncoded
-    @POST("register")
-    fun register(
-        @Field("email") email: String,
-        @Field("password") password: String,
-        @Field("firstName") firstName: String,
-        @Field("lastName") lastName: String
-    ): Call<RegisterResponse>
+    @POST("/register")
+    suspend fun signup(@Body signupBody: SignupBody): Response<SignupResponse>
 
-    @FormUrlEncoded
-    @POST("login")
-    fun login(
-        @Field("email") email: String,
-        @Field("password") password: String
-    ): Call<LoginResponse>
+    @POST("/login")
+    suspend fun login(@Body loginBody: LoginBody): Response<LoginResponse>
 }

@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -13,14 +15,18 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.databinding.ActivityLoginBinding
-import com.thepetot.mindcraft.data.pref.UserModel
+import com.thepetot.mindcraft.ui.ViewModelFactory
 import com.thepetot.mindcraft.ui.main.MainActivity
 import com.thepetot.mindcraft.ui.signup.SignupActivity
+import com.thepetot.mindcraft.utils.Result
 
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    private val viewModel by viewModels<LoginViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +34,31 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupObserver()
         setupView()
         setupButton()
+    }
+
+    private fun setupObserver() {
+        viewModel.loginResult.observe(this) { result ->
+            when (result) {
+                is Result.Error -> {
+                    binding.progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                    println("Result.Error")
+                }
+                is Result.Loading -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding.progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    val mainIntent = Intent(this, MainActivity::class.java)
+                    startActivity(mainIntent)
+                    finish()
+                }
+            }
+        }
     }
 
     private fun setupView() {
@@ -70,7 +99,10 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else -> {
                     // TODO: Implement actual login mechanism
-                    showOtpDialog()
+                    val email = binding.etEmail.text.toString()
+                    val password = binding.etPassword.text.toString()
+                    viewModel.login(email, password)
+                    //showOtpDialog()
                 }
             }
         }

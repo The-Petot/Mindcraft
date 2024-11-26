@@ -1,61 +1,29 @@
 package com.thepetot.mindcraft.ui.signup
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.thepetot.mindcraft.data.pref.UserModel
-import com.thepetot.mindcraft.data.pref.UserPreference
-import com.thepetot.mindcraft.data.remote.response.RegisterResponse
-import com.thepetot.mindcraft.data.remote.retrofit.ApiConfig
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.thepetot.mindcraft.data.remote.response.signup.SignupBody
+import com.thepetot.mindcraft.data.remote.response.signup.SignupResponse
+import com.thepetot.mindcraft.data.repository.UserRepository
+import com.thepetot.mindcraft.utils.Result
 
-class SignupViewModel(private val pref: UserPreference) : ViewModel() {
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+class SignupViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    private val _registerSuccess = MutableLiveData(false)
-    val registerSuccess: LiveData<Boolean> = _registerSuccess
+    private val _signupResult = MediatorLiveData<Result<SignupResponse>>()
+    val signupResult: LiveData<Result<SignupResponse>> get() = _signupResult
 
-    fun register(email: String, password: String, firstName: String, lastName: String) {
-        _isLoading.value = true
-        val apiService = ApiConfig().getApiService()
-        val registerUser = apiService.register(email, password, firstName, lastName)
-        registerUser.enqueue(object : Callback<RegisterResponse> {
-            override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        // Simpan data pengguna ke UserPreference
-                        saveUser(UserModel(firstName, lastName, email, password, false))
-                        _registerSuccess.postValue(true)
-                        Log.e(TAG, "Register berhasil: ${responseBody.message}")
-                    }
-                } else {
-                    Log.e(TAG, "Register gagal: ${response.message()}")
-                }
+    fun signup(firstName: String, lastName: String, email: String, password: String) {
+        val signupBody = SignupBody(firstName, lastName, password, email)
+        val source = userRepository.signup(signupBody)
+        _signupResult.addSource(source) { result ->
+            _signupResult.value = result
+
+            // Remove the source when the operation is complete
+            if (result is Result.Success || result is Result.Error) {
+                _signupResult.removeSource(source)
             }
-
-            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                _isLoading.value = false
-                Log.e(TAG, "Register gagal: ${t.message.toString()}")
-            }
-        })
-    }
-
-    private fun saveUser(dataUser: UserModel) {
-        viewModelScope.launch {
-            pref.saveUser(dataUser)
         }
-    }
-
-    companion object {
-        private const val TAG = "RegisterViewModel"
     }
 }

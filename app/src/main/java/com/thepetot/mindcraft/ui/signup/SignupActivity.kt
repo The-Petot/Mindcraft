@@ -2,14 +2,22 @@ package com.thepetot.mindcraft.ui.signup
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import com.thepetot.mindcraft.data.remote.response.signup.SignupResponse
 import com.thepetot.mindcraft.databinding.ActivitySignupBinding
+import com.thepetot.mindcraft.ui.ViewModelFactory
+import com.thepetot.mindcraft.utils.Result
 
 class SignupActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivitySignupBinding
-    private lateinit var signupViewModel: SignupViewModel
+    private val viewModel by viewModels<SignupViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,8 +25,28 @@ class SignupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupObserver()
         setupView()
         setupButton()
+    }
+
+    private fun setupObserver() {
+        viewModel.signupResult.observe(this) { result ->
+            when (result) {
+                is Result.Error -> {
+                    binding.progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                }
+                is Result.Loading -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding.progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            }
+        }
     }
 
     private fun setupView() {
@@ -100,7 +128,13 @@ class SignupActivity : AppCompatActivity() {
                 }
                 else -> {
                     // TODO: Implement actual signup mechanism
-                    finish()
+                    val firstName = binding.etFirstName.text.toString()
+                    val lastName = binding.etLastName.text.toString()
+                    val email = binding.etEmail.text.toString()
+                    val password = binding.etPassword.text.toString()
+
+                    println("Signup button pressed")
+                    viewModel.signup(firstName, lastName, email, password)
                 }
             }
         }

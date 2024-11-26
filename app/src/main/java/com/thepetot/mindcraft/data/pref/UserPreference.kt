@@ -1,87 +1,79 @@
 package com.thepetot.mindcraft.data.pref
 
+import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.internal.userAgent
 
-class UserPreference private constructor(private val dataStore: DataStore<androidx.datastore.preferences.core.Preferences>){
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_session")
 
-    fun getUser(): Flow<UserModel> {
+class UserPreference private constructor(private val dataStore: DataStore<Preferences>){
+
+    suspend fun saveDataUser(dataUser: UserModel) {
+        dataStore.edit {preferences ->
+            preferences[USERID_KEY] = dataUser.userId
+            preferences[FIRST_NAME_KEY] = dataUser.firstName
+            preferences[LAST_NAME_KEY] = dataUser.lastName
+            preferences[EMAIL_KEY] = dataUser.email
+            preferences[PASSWORD_KEY] = dataUser.password
+            preferences[PROFILE_PICTURE_KEY] = dataUser.profilePicture
+            preferences[IS_LOGIN_KEY] = dataUser.isLogin
+            preferences[IS_2FA_KEY] = dataUser.is2FA
+            preferences[ACCESS_TOKEN_KEY] = dataUser.accessToken
+            preferences[REFRESH_TOKEN_KEY] = dataUser.refreshToken
+            preferences[SESSION_ID_KEY] = dataUser.sessionId
+        }
+    }
+
+    fun getDataUser(): Flow<UserModel> {
         return dataStore.data.map { preferences ->
             UserModel(
-                preferences[FIRSTNAME_KEY] ?: "",
-                preferences[LASTNAME_KEY] ?: "",
+                preferences[USERID_KEY] ?: 0,
+                preferences[FIRST_NAME_KEY] ?: "",
+                preferences[LAST_NAME_KEY] ?: "",
                 preferences[EMAIL_KEY] ?: "",
                 preferences[PASSWORD_KEY] ?: "",
-                preferences[STATUS_KEY] ?: false,
-                preferences[USER_ID_KEY]?.toInt() // Baca userId sebagai Int
+                preferences[PROFILE_PICTURE_KEY] ?: "",
+                preferences[IS_LOGIN_KEY] ?: false,
+                preferences[IS_2FA_KEY] ?: false,
+                preferences[ACCESS_TOKEN_KEY] ?: "",
+                preferences[REFRESH_TOKEN_KEY] ?: "",
+                preferences[SESSION_ID_KEY] ?: ""
             )
         }
     }
 
-
-    suspend fun saveUser(dataUser: UserModel) {
-        dataStore.edit {preferences ->
-            preferences[FIRSTNAME_KEY] = dataUser.firstName
-            preferences[LASTNAME_KEY] = dataUser.lastName
-            preferences[EMAIL_KEY] = dataUser.email
-            preferences[PASSWORD_KEY] = dataUser.password
-            preferences[STATUS_KEY] = dataUser.isLogin
-        }
-    }
-
-    suspend fun login() {
-        dataStore.edit {preferences ->
-            preferences[STATUS_KEY] = true
-        }
-    }
-
-    suspend fun saveToken(token: String) {
-        dataStore.edit {preferences ->
-            preferences[TOKEN_KEY] = token
-        }
-    }
-
-    fun getToken(): Flow<String?> {
-        return dataStore.data.map { preferences ->
-            preferences[TOKEN_KEY]
-        }
-    }
-
-    suspend fun logout() {
-        dataStore.edit {preferences ->
-            preferences[STATUS_KEY] = false
-            preferences.remove(TOKEN_KEY)
-        }
-    }
-
-    suspend fun saveUserData(userId: Int, token: String) {
+    suspend fun clearDataUser() {
         dataStore.edit { preferences ->
-            preferences[USER_ID_KEY] = userId.toString()
-            preferences[TOKEN_KEY] = token
+            preferences.clear()
         }
     }
-
-
-
 
     companion object {
         @Volatile
         private var INSTANCE: UserPreference? = null
 
-        private val FIRSTNAME_KEY = stringPreferencesKey("firstName")
-        private val LASTNAME_KEY = stringPreferencesKey("lastName")
+        private val USERID_KEY = intPreferencesKey("userId")
+        private val FIRST_NAME_KEY = stringPreferencesKey("firstName")
+        private val LAST_NAME_KEY = stringPreferencesKey("lastName")
         private val EMAIL_KEY = stringPreferencesKey("email")
         private val PASSWORD_KEY = stringPreferencesKey("password")
-        private val STATUS_KEY = booleanPreferencesKey("status")
-        private val TOKEN_KEY = stringPreferencesKey("token")
-        private val USER_ID_KEY = stringPreferencesKey("userId")
+        private val PROFILE_PICTURE_KEY = stringPreferencesKey("profilePicture")
+        private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
+        private val IS_2FA_KEY = booleanPreferencesKey("is2FA")
+        private val ACCESS_TOKEN_KEY = stringPreferencesKey("accessToken")
+        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refreshToken")
+        private val SESSION_ID_KEY = stringPreferencesKey("sessionId")
 
 
-        fun getInstance(dataStore: DataStore<androidx.datastore.preferences.core.Preferences>): UserPreference {
+        fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {
                 val instance = UserPreference(dataStore)
                 INSTANCE = instance
