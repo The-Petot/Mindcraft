@@ -16,7 +16,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "us
 
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>){
 
-    suspend fun saveDataUser(dataUser: UserModel) {
+    suspend fun saveUserData(dataUser: UserModel) {
         dataStore.edit {preferences ->
             preferences[USERID_KEY] = dataUser.userId
             preferences[FIRST_NAME_KEY] = dataUser.firstName
@@ -32,7 +32,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    fun getDataUser(): Flow<UserModel> {
+    fun getUserData(): Flow<UserModel> {
         return dataStore.data.map { preferences ->
             UserModel(
                 preferences[USERID_KEY] ?: 0,
@@ -50,7 +50,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun clearDataUser() {
+    suspend fun clearUserData() {
         dataStore.edit { preferences ->
             preferences.clear()
         }

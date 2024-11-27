@@ -3,6 +3,7 @@ package com.thepetot.mindcraft.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.gson.Gson
+import com.thepetot.mindcraft.data.pref.UserModel
 import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.data.remote.response.ErrorResponse
 import com.thepetot.mindcraft.data.remote.response.login.LoginBody
@@ -38,7 +39,7 @@ class UserRepository private constructor(
         }
     }
 
-    fun login(loginBody: LoginBody): LiveData<Result<LoginResponse>> = liveData {
+    fun login(loginBody: LoginBody): LiveData<Result<UserModel>> = liveData {
         emit(Result.Loading)
         try {
             val response = apiService.login(loginBody)
@@ -51,8 +52,22 @@ class UserRepository private constructor(
                 val refreshToken = header["X-Refresh-Token"]
                 val sessionId = header["X-Session-Id"]
                 val userId = response.body()?.data?.userId
-                println(authorization + refreshToken + sessionId + userId)
-                emit(Result.Success(response.body()!!))
+
+                val user = UserModel(
+                    userId!!,
+                    "Admin",
+                    "Test",
+                    loginBody.email,
+                    loginBody.password,
+                    "image::/",
+                    true,
+                    false,
+                    authorization!!,
+                    refreshToken!!,
+                    sessionId!!
+                )
+
+                emit(Result.Success(user))
             } else {
                 try {
                     val errorBody = response.errorBody()?.string()
@@ -67,6 +82,10 @@ class UserRepository private constructor(
             emit(Result.Error(e.message.toString()))
         }
     }
+
+    suspend fun saveUserData(user: UserModel) = userPreference.saveUserData(user)
+
+    fun getUserData() = userPreference.getUserData()
 
     companion object {
         @Volatile

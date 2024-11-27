@@ -20,7 +20,7 @@ object ApiConfig {
 
         val authInterceptor = Interceptor { chain ->
             val req = chain.request()
-            val dataUser = runBlocking { userPreference.getDataUser().first() }
+            val dataUser = runBlocking { userPreference.getUserData().first() }
             val requestHeaders = req.newBuilder()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("X-Session-Id", dataUser.sessionId)

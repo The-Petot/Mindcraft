@@ -17,8 +17,10 @@ import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.databinding.ActivityLoginBinding
 import com.thepetot.mindcraft.ui.ViewModelFactory
 import com.thepetot.mindcraft.ui.main.MainActivity
+import com.thepetot.mindcraft.ui.onboarding.OnboardingActivity.Companion.USER_LOGGED_IN
 import com.thepetot.mindcraft.ui.signup.SignupActivity
 import com.thepetot.mindcraft.utils.Result
+import com.thepetot.mindcraft.utils.SharedPreferencesManager
 
 
 class LoginActivity : AppCompatActivity() {
@@ -31,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -45,14 +48,14 @@ class LoginActivity : AppCompatActivity() {
                 is Result.Error -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
                     Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
-                    println("Result.Error")
                 }
                 is Result.Loading -> {
                     binding.progressIndicator.visibility = View.VISIBLE
                 }
                 is Result.Success -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
-                    Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    viewModel.saveUserData(result.data)
+                    SharedPreferencesManager.saveBoolean(applicationContext, USER_LOGGED_IN, true)
                     val mainIntent = Intent(this, MainActivity::class.java)
                     startActivity(mainIntent)
                     finish()
@@ -145,4 +148,5 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 }
