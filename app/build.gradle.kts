@@ -62,6 +62,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation (libs.androidx.core.ktx.v1101)
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
@@ -79,4 +80,8 @@ dependencies {
 
     // Datastore
     implementation (libs.androidx.datastore.preferences)
+
+    //Glide
+    implementation (libs.github.glide)
+    annotationProcessor (libs.compiler)
 }

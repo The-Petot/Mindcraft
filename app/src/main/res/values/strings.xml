@@ -26,4 +26,16 @@
     <string name="signup_underline"><u>Sign Up</u></string>
 
     <string name="timer_finished">00:00</string>
+
+    <string name="profile_picture">Profile picture</string>
+    <string name="navigate">Navigate</string>
+    <string name="two_step_verification">Two step verification</string>
+    <string name="notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="photo">Photo</string>
+    <string name="save">Save</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="logout">Logout</string>
+    <string name="enable_two_step_verification">Enable two step verification</string>
 </resources>
