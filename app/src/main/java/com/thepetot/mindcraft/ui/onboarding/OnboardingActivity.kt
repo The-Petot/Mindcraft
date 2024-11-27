@@ -14,6 +14,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.thepetot.mindcraft.databinding.ActivityOnboardingBinding
 import com.thepetot.mindcraft.ui.adapter.OnboardingAdapter
 import com.thepetot.mindcraft.ui.login.LoginActivity
+import com.thepetot.mindcraft.ui.main.MainActivity
+import com.thepetot.mindcraft.utils.SharedPreferencesManager
 import com.thepetot.mindcraft.utils.setCurrentItem
 import kotlin.math.abs
 
@@ -21,19 +23,26 @@ class OnboardingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOnboardingBinding
     private lateinit var viewPager: ViewPager2
-    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        sharedPref = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
 
-        if (isOnboardingFinished()) {
+        if (SharedPreferencesManager.getBoolean(applicationContext, USER_LOGGED_IN)) {
+            val mainIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainIntent)
+            finish()
+            return
+        }
+
+        if (SharedPreferencesManager.getBoolean(applicationContext, ONBOARDING_FINISHED)) {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
             finish()
+            return
         }
+
+        enableEdgeToEdge()
 
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         val view = binding.root
@@ -80,7 +89,7 @@ class OnboardingActivity : AppCompatActivity() {
 //                viewPager.currentItem = nextPage
                 viewPager.setCurrentItem(nextPage, duration = 500)
             } else {
-                setOnboardingFinished()
+                SharedPreferencesManager.saveBoolean(applicationContext, ONBOARDING_FINISHED, true)
                 val loginIntent = Intent(this, LoginActivity::class.java)
                 startActivity(loginIntent)
                 finish()
@@ -95,20 +104,12 @@ class OnboardingActivity : AppCompatActivity() {
         }
     }
 
-    private fun setOnboardingFinished() {
-        sharedPref.edit().putBoolean(FINISHED_KEY, true).apply()
-    }
-
-    private fun isOnboardingFinished(): Boolean {
-        return sharedPref.getBoolean(FINISHED_KEY, false)
-    }
-
     private fun updateButtonVisibility(position: Int) {
         binding.btnBack.visibility = if (position == 0) View.GONE else View.VISIBLE
     }
 
     companion object {
-        const val PREF_NAME = "onboarding"
-        const val FINISHED_KEY = "finished"
+        const val ONBOARDING_FINISHED = "onboarding_finished"
+        const val USER_LOGGED_IN = "user_logged_in"
     }
 }
