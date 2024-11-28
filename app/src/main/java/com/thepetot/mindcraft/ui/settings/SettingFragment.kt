@@ -99,7 +99,7 @@ class SettingFragment : Fragment() {
 
     private fun loadUserData() {
         lifecycleScope.launch {
-            val user = userPreference.getDataUser().first()
+            val user = userPreference.getUserData().first()
             firstNameTextView.text = "${user.firstName.ifEmpty { "First Name" }} ${user.lastName.ifEmpty { "Last Name" }}"
             emailTextView.text = user.email.ifEmpty { "email@example.com" }
 
@@ -118,9 +118,9 @@ class SettingFragment : Fragment() {
 
     private fun toggleTwoStepVerification(isChecked: Boolean) {
         lifecycleScope.launch {
-            val user = userPreference.getDataUser().first()
+            val user = userPreference.getUserData().first()
             val updatedUser = user.copy(is2FA = isChecked)
-            userPreference.saveDataUser(updatedUser)
+            userPreference.saveUserData(updatedUser)
 
             val message = if (isChecked) {
                 "Two-step verification enabled"
@@ -148,7 +148,7 @@ class SettingFragment : Fragment() {
 
     private fun logout() {
         lifecycleScope.launch {
-            userPreference.clearDataUser()
+            userPreference.deleteUserData()
             Snackbar.make(requireView(), "Logged out successfully", Snackbar.LENGTH_SHORT).show()
             // Navigate to login or close the app
             requireActivity().finish()

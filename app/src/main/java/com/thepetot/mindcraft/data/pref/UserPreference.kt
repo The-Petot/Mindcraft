@@ -10,7 +10,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import okhttp3.internal.userAgent
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_session")
 
@@ -24,7 +23,6 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences[EMAIL_KEY] = dataUser.email
             preferences[PASSWORD_KEY] = dataUser.password
             preferences[PROFILE_PICTURE_KEY] = dataUser.profilePicture
-            preferences[IS_LOGIN_KEY] = dataUser.isLogin
             preferences[IS_2FA_KEY] = dataUser.is2FA
             preferences[ACCESS_TOKEN_KEY] = dataUser.accessToken
             preferences[REFRESH_TOKEN_KEY] = dataUser.refreshToken
@@ -41,7 +39,6 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
                 preferences[EMAIL_KEY] ?: "",
                 preferences[PASSWORD_KEY] ?: "",
                 preferences[PROFILE_PICTURE_KEY] ?: "",
-                preferences[IS_LOGIN_KEY] ?: false,
                 preferences[IS_2FA_KEY] ?: false,
                 preferences[ACCESS_TOKEN_KEY] ?: "",
                 preferences[REFRESH_TOKEN_KEY] ?: "",
@@ -50,11 +47,39 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun clearUserData() {
+    suspend fun deleteUserData() {
         dataStore.edit { preferences ->
-            preferences.clear()
+            preferences.remove(USERID_KEY)
+            preferences.remove(FIRST_NAME_KEY)
+            preferences.remove(LAST_NAME_KEY)
+            preferences.remove(EMAIL_KEY)
+            preferences.remove(PASSWORD_KEY)
+            preferences.remove(PROFILE_PICTURE_KEY)
+            preferences.remove(IS_2FA_KEY)
+            preferences.remove(ACCESS_TOKEN_KEY)
+            preferences.remove(REFRESH_TOKEN_KEY)
+            preferences.remove(SESSION_ID_KEY)
         }
     }
+
+    suspend fun <T> setPreferenceSettings(pref: Preferences.Key<T>, value: T) {
+        dataStore.edit { preferences ->
+            preferences[pref] = value
+        }
+    }
+
+    fun <T> getPreferenceSettings(pref: Preferences.Key<T>, defaultValue: T): Flow<T> {
+        return dataStore.data.map { preferences ->
+            preferences[pref] ?: defaultValue
+        }
+    }
+
+    suspend fun <T> deletePreferenceSettings(pref: Preferences.Key<T>) {
+        dataStore.edit { preferences ->
+            preferences.remove(pref)
+        }
+    }
+
 
     companion object {
         @Volatile
@@ -66,12 +91,10 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val EMAIL_KEY = stringPreferencesKey("email")
         private val PASSWORD_KEY = stringPreferencesKey("password")
         private val PROFILE_PICTURE_KEY = stringPreferencesKey("profilePicture")
-        private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
         private val IS_2FA_KEY = booleanPreferencesKey("is2FA")
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("accessToken")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refreshToken")
         private val SESSION_ID_KEY = stringPreferencesKey("sessionId")
-
 
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {

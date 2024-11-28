@@ -1,5 +1,6 @@
 package com.thepetot.mindcraft.data.repository
 
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.gson.Gson
@@ -12,6 +13,7 @@ import com.thepetot.mindcraft.data.remote.response.signup.SignupBody
 import com.thepetot.mindcraft.data.remote.response.signup.SignupResponse
 import com.thepetot.mindcraft.data.remote.retrofit.ApiService
 import com.thepetot.mindcraft.utils.Result
+import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 
 class UserRepository private constructor(
@@ -61,7 +63,6 @@ class UserRepository private constructor(
                     loginBody.password,
                     "image::/",
                     true,
-                    false,
                     authorization!!,
                     refreshToken!!,
                     sessionId!!
@@ -84,8 +85,12 @@ class UserRepository private constructor(
     }
 
     suspend fun saveUserData(user: UserModel) = userPreference.saveUserData(user)
+    fun getUserData(): Flow<UserModel> = userPreference.getUserData()
+    suspend fun deleteUserData() = userPreference.deleteUserData()
 
-    fun getUserData() = userPreference.getUserData()
+    suspend fun <T> setPreferenceSettings(pref: Preferences.Key<T>, value: T) = userPreference.setPreferenceSettings(pref, value)
+    fun <T> getPreferenceSettings(pref: Preferences.Key<T>, defaultValue: T): Flow<T> = userPreference.getPreferenceSettings(pref, defaultValue)
+    suspend fun <T> deletePreferenceSettings(pref: Preferences.Key<T>) = userPreference.deletePreferenceSettings(pref)
 
     companion object {
         @Volatile

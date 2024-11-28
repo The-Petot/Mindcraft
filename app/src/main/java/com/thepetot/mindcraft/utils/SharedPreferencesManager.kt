@@ -10,19 +10,29 @@ object SharedPreferencesManager {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
-    fun saveBoolean(context: Context, key: String, value: Boolean) {
-        getInstance(context).edit().putBoolean(key, value).apply()
+    @Suppress("UNCHECKED_CAST")
+    fun <T> get(context: Context, key: String, defaultValue: T): T {
+        val sharedPreferences = getInstance(context)
+        return when (defaultValue) {
+            is Boolean -> sharedPreferences.getBoolean(key, defaultValue) as T
+            is String -> sharedPreferences.getString(key, defaultValue) as T
+            is Int -> sharedPreferences.getInt(key, defaultValue) as T
+            is Float -> sharedPreferences.getFloat(key, defaultValue) as T
+            is Long -> sharedPreferences.getLong(key, defaultValue) as T
+            else -> throw IllegalArgumentException("Unsupported type")
+        }
     }
 
-    fun getBoolean(context: Context, key: String, defaultValue: Boolean = false): Boolean {
-        return getInstance(context).getBoolean(key, defaultValue)
-    }
-
-    fun saveString(context: Context, key: String, value: String) {
-        getInstance(context).edit().putString(key, value).apply()
-    }
-
-    fun getString(context: Context, key: String, defaultValue: String? = null): String? {
-        return getInstance(context).getString(key, defaultValue)
+    fun <T> set(context: Context, key: String, value: T) {
+        val editor = getInstance(context).edit()
+        when (value) {
+            is Boolean -> editor.putBoolean(key, value)
+            is String -> editor.putString(key, value)
+            is Int -> editor.putInt(key, value)
+            is Float -> editor.putFloat(key, value)
+            is Long -> editor.putLong(key, value)
+            else -> throw IllegalArgumentException("Unsupported type")
+        }
+        editor.apply()
     }
 }

@@ -7,7 +7,6 @@ data class UserModel(
     val email: String,
     val password: String,
     val profilePicture: String,
-    val isLogin: Boolean,
     val is2FA: Boolean,
     val accessToken: String,
     val refreshToken: String,

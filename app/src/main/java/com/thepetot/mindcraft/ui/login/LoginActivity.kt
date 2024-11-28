@@ -3,6 +3,7 @@ package com.thepetot.mindcraft.ui.login
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -10,9 +11,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.lifecycle.lifecycleScope
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.databinding.ActivityLoginBinding
 import com.thepetot.mindcraft.ui.ViewModelFactory
@@ -21,11 +37,13 @@ import com.thepetot.mindcraft.ui.onboarding.OnboardingActivity.Companion.USER_LO
 import com.thepetot.mindcraft.ui.signup.SignupActivity
 import com.thepetot.mindcraft.utils.Result
 import com.thepetot.mindcraft.utils.SharedPreferencesManager
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var auth: FirebaseAuth
     private val viewModel by viewModels<LoginViewModel> {
         ViewModelFactory.getInstance(this)
     }
@@ -36,6 +54,8 @@ class LoginActivity : AppCompatActivity() {
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        auth = Firebase.auth
 
         setupObserver()
         setupView()
@@ -55,10 +75,8 @@ class LoginActivity : AppCompatActivity() {
                 is Result.Success -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
                     viewModel.saveUserData(result.data)
-                    SharedPreferencesManager.saveBoolean(applicationContext, USER_LOGGED_IN, true)
-                    val mainIntent = Intent(this, MainActivity::class.java)
-                    startActivity(mainIntent)
-                    finish()
+                    SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
+                    navigateToMainPage()
                 }
             }
         }
@@ -109,6 +127,71 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.btnGoogleLogin.setOnClickListener {
+            val credentialManager = CredentialManager.create(this)
+
+            val googleIdOption = GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(getString(R.string.default_web_client_id))
+                .build()
+
+            val request = GetCredentialRequest.Builder() //import from androidx.CredentialManager
+                .addCredentialOption(googleIdOption)
+                .build()
+
+            lifecycleScope.launch {
+                try {
+                    val result: GetCredentialResponse = credentialManager.getCredential( //import from androidx.CredentialManager
+                        request = request,
+                        context = this@LoginActivity,
+                    )
+                    handleSignIn(result)
+                } catch (e: GetCredentialException) { //import from androidx.CredentialManager
+                    Log.d("Error", e.message.toString())
+                }
+            }
+        }
+    }
+
+    private fun handleSignIn(result: GetCredentialResponse) {
+        // Handle the successfully returned credential.
+        when (val credential = result.credential) {
+            is CustomCredential -> {
+                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    try {
+                        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                        firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+                    } catch (e: GoogleIdTokenParsingException) {
+                        Log.e(TAG, "Received an invalid google id token response", e)
+                    }
+                } else {
+                    // Catch any unrecognized custom credential type here.
+                    Log.e(TAG, "Unexpected type of credential")
+                }
+            }
+            else -> {
+                // Catch any unrecognized credential type here.
+                Log.e(TAG, "Unexpected type of credential")
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential: AuthCredential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user: FirebaseUser? = auth.currentUser
+                    if (user != null) {
+                        SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
+                        navigateToMainPage()
+                    }
+                } else {
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                }
+            }
     }
 
     private fun showOtpDialog() {
@@ -141,11 +224,28 @@ class LoginActivity : AppCompatActivity() {
 //                handleOtpSubmission(otpCode)
                 // TODO: Implement actual OTP mechanism
                 dialog.dismiss() // Dismiss only if there's no error
-                val mainIntent = Intent(this, MainActivity::class.java)
-                startActivity(mainIntent)
-                finish()
+
             }
         }
     }
 
+    private fun navigateToMainPage() {
+        val mainIntent = Intent(this, MainActivity::class.java)
+        startActivity(mainIntent)
+        finish()
+    }
+
+    companion object {
+        private const val TAG = "LoginActivity"
+    }
 }
+
+// TODO: Self note (don't delete)
+//lifecycleScope.launch {
+//    withContext(Dispatchers.IO) {
+//        // Perform heavy operations here (e.g., database, network, file operations)
+//    }
+//    withContext(Dispatchers.Main) {
+//        // Update the UI here after the operation
+//    }
+//}

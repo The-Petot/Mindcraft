@@ -88,7 +88,7 @@ class SettingProfileActivity : AppCompatActivity() {
     private fun loadUserData() {
         lifecycleScope.launch {
             // Mengambil data pengguna yang sudah diloginkan dari UserPreference
-            val user = userPreference.getDataUser().first()
+            val user = userPreference.getUserData().first()
 
             // Menampilkan First Name dan Last Name, dengan nilai default jika kosong
             firstNameEditText.setText(user.firstName.ifEmpty { "First Name" })
@@ -110,19 +110,18 @@ class SettingProfileActivity : AppCompatActivity() {
     private fun updateUserData() {
         lifecycleScope.launch {
             val user = UserModel(
-                userId = userPreference.getDataUser().first().userId,
+                userId = userPreference.getUserData().first().userId,
                 firstName = firstNameEditText.text.toString(),
                 lastName = lastNameEditText.text.toString(),
                 email = emailEditText.text.toString(),
                 password = passwordEditText.text.toString(),
                 profilePicture = "", // You can update this with the image URI or path
-                isLogin = userPreference.getDataUser().first().isLogin,
-                is2FA = userPreference.getDataUser().first().is2FA,
-                accessToken = userPreference.getDataUser().first().accessToken,
-                refreshToken = userPreference.getDataUser().first().refreshToken,
-                sessionId = userPreference.getDataUser().first().sessionId
+                is2FA = userPreference.getUserData().first().is2FA,
+                accessToken = userPreference.getUserData().first().accessToken,
+                refreshToken = userPreference.getUserData().first().refreshToken,
+                sessionId = userPreference.getUserData().first().sessionId
             )
-            userPreference.saveDataUser(user)
+            userPreference.saveUserData(user)
             // Show success message or navigate back
         }
     }

@@ -1,7 +1,6 @@
 package com.thepetot.mindcraft.ui.onboarding
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.animation.PathInterpolator
@@ -27,21 +26,7 @@ class OnboardingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-
-        if (SharedPreferencesManager.getBoolean(applicationContext, USER_LOGGED_IN)) {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
-            finish()
-            return
-        }
-
-        if (SharedPreferencesManager.getBoolean(applicationContext, ONBOARDING_FINISHED)) {
-            val loginIntent = Intent(this, LoginActivity::class.java)
-            startActivity(loginIntent)
-            finish()
-            return
-        }
-
+        setupCheck()
         enableEdgeToEdge()
 
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
@@ -54,11 +39,20 @@ class OnboardingActivity : AppCompatActivity() {
             insets
         }
 
-        initializeViewPager()
-        setupButtonListeners()
+
+        initViewPager()
+        setupButtons()
     }
 
-    private fun initializeViewPager() {
+    private fun setupCheck() {
+        if (SharedPreferencesManager.get(applicationContext, USER_LOGGED_IN, false)) {
+            navigateToMainPage()
+        } else if (SharedPreferencesManager.get(applicationContext, ONBOARDING_FINISHED, false)) {
+            navigateToLoginPage()
+        }
+    }
+
+    private fun initViewPager() {
         viewPager = binding.viewPager
         val dotsIndicator = binding.dotsIndicator
         val onboardingAdapter = OnboardingAdapter(this)
@@ -82,26 +76,38 @@ class OnboardingActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupButtonListeners() {
-        binding.btnNext.setOnClickListener {
-            val nextPage = viewPager.currentItem + 1
-            if (nextPage < (viewPager.adapter?.itemCount ?: 0)) {
-//                viewPager.currentItem = nextPage
-                viewPager.setCurrentItem(nextPage, duration = 500)
-            } else {
-                SharedPreferencesManager.saveBoolean(applicationContext, ONBOARDING_FINISHED, true)
-                val loginIntent = Intent(this, LoginActivity::class.java)
-                startActivity(loginIntent)
-                finish()
-            }
-        }
+    private fun setupButtons() {
+        binding.btnNext.setOnClickListener { nextButton() }
+        binding.btnBack.setOnClickListener { backButton() }
+    }
 
-        binding.btnBack.setOnClickListener {
-            val previousPage = viewPager.currentItem - 1
-            if (previousPage >= 0) {
-                viewPager.setCurrentItem(previousPage, duration = 500)
-            }
+    private fun nextButton() {
+        val nextPage = viewPager.currentItem + 1
+        if (nextPage < (viewPager.adapter?.itemCount ?: 0)) {
+            viewPager.setCurrentItem(nextPage, duration = 500)
+        } else {
+            SharedPreferencesManager.set(applicationContext, ONBOARDING_FINISHED, true)
+            navigateToLoginPage()
         }
+    }
+
+    private fun backButton() {
+        val previousPage = viewPager.currentItem - 1
+        if (previousPage >= 0) {
+            viewPager.setCurrentItem(previousPage, duration = 500)
+        }
+    }
+
+    private fun navigateToLoginPage() {
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
+        finish()
+    }
+
+    private fun navigateToMainPage() {
+        val mainIntent = Intent(this, MainActivity::class.java)
+        startActivity(mainIntent)
+        finish()
     }
 
     private fun updateButtonVisibility(position: Int) {
