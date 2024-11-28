@@ -113,7 +113,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showOtpDialog() {
         // Inflate the custom layout
-        var condition = false
         val dialogView = LayoutInflater.from(this).inflate(R.layout.otp_dialog, null)
 
         // Get references to input fields
