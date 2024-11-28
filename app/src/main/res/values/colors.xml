@@ -8,5 +8,7 @@
     <color name="accent">#A0E9FF</color>
     <color name="surface">#F8FEFF</color>
 
+    <color name="grey">#D6D6D6</color>
+
 
 </resources>
