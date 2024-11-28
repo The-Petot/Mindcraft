@@ -8,12 +8,14 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.viewpager2.widget.ViewPager2
+import com.thepetot.mindcraft.data.dummy.RankingUserModel
 import com.thepetot.mindcraft.data.remote.response.ListQuestionsItem
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
 import com.thepetot.mindcraft.data.remote.response.Options
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.random.Random
 
 
 fun generateDummyData(count: Int): List<ListQuizItem> {
@@ -149,7 +151,30 @@ fun generateDummyQuestions(): List<ListQuestionsItem> {
     )
 }
 
+fun generateRankingUsers(): List<RankingUserModel> {
+    val firstNames = listOf(
+        "Alice", "Bob", "Charlie", "David", "Emma",
+        "Fiona", "George", "Hannah", "Isaac", "Julia",
+        "Kevin", "Lily", "Michael", "Nina", "Oscar"
+    )
 
+    val profilePictures = listOf(
+        "https://example.com/profile1.png",
+        "https://example.com/profile2.png",
+        "https://example.com/profile3.png",
+        "https://example.com/profile4.png",
+        "https://example.com/profile5.png"
+    )
+
+    return List(15) { index ->
+        RankingUserModel(
+            rank = index + 1,
+            firstName = firstNames.random(),
+            profilePicture = profilePictures.random(),
+            score = Random.nextInt(50, 500)
+        )
+    }
+}
 
 fun formatDuration(duration: Int): String {
     return if (duration < 60) {
