@@ -7,6 +7,7 @@ import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.data.repository.UserRepository
 import com.thepetot.mindcraft.di.Injection
 import com.thepetot.mindcraft.ui.login.LoginViewModel
+import com.thepetot.mindcraft.ui.settings.SettingsViewModel
 import com.thepetot.mindcraft.ui.signup.SignupViewModel
 
 class ViewModelFactory(
@@ -20,6 +21,9 @@ class ViewModelFactory(
             }
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
                 LoginViewModel(userRepository) as T
+            }
+            modelClass.isAssignableFrom(SettingsViewModel::class.java) -> {
+                SettingsViewModel(userRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

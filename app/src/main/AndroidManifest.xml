@@ -17,8 +17,9 @@
         android:theme="@style/Theme.Mindcraft"
         tools:targetApi="35">
         <activity
-            android:name=".ui.settings.SettingProfileActivity"
-            android:exported="false" />
+            android:name=".ui.settings.SettingsProfileActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.home.quiz.result.ResultQuizActivity"
             android:exported="false"

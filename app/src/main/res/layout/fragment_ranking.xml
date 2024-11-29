@@ -19,6 +19,10 @@
             app:title="@string/title_ranking"
             app:titleTextAppearance="@style/CustomToolbarTitle" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
