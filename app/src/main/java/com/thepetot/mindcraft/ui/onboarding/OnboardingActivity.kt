@@ -6,6 +6,7 @@ import android.view.View
 import android.view.animation.PathInterpolator
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -40,11 +41,24 @@ class OnboardingActivity : AppCompatActivity() {
         }
 
 
+
         initViewPager()
         setupButtons()
     }
 
     private fun setupCheck() {
+        when (SharedPreferencesManager.get(applicationContext, APP_THEME, SYSTEM_DEFAULT_THEME)) {
+            SYSTEM_DEFAULT_THEME -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            LIGHT_THEME -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            DARK_THEME -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        }
+
         if (SharedPreferencesManager.get(applicationContext, USER_LOGGED_IN, false)) {
             navigateToMainPage()
         } else if (SharedPreferencesManager.get(applicationContext, ONBOARDING_FINISHED, false)) {
@@ -117,5 +131,10 @@ class OnboardingActivity : AppCompatActivity() {
     companion object {
         const val ONBOARDING_FINISHED = "onboarding_finished"
         const val USER_LOGGED_IN = "user_logged_in"
+
+        const val APP_THEME = "app_theme"
+        const val DARK_THEME = "Dark"
+        const val LIGHT_THEME = "Light"
+        const val SYSTEM_DEFAULT_THEME = "System Default"
     }
 }
