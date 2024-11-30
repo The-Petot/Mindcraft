@@ -8,6 +8,7 @@
     tools:context=".ui.home.quiz.add.AddQuizActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -28,6 +29,10 @@
             android:indeterminate="true"
             android:visibility="invisible"
             tools:visibility="visible" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -130,7 +135,8 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="128dp"
                 android:text="Submit"
                 android:textStyle="bold"
                 app:icon="@drawable/ic_pencil"

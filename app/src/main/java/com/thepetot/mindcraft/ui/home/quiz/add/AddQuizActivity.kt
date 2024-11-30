@@ -21,9 +21,10 @@ class AddQuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddQuizBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
 
@@ -40,9 +41,9 @@ class AddQuizActivity : AppCompatActivity() {
                 "2024-11-24T10:00:00",
                 5,
                 "Azka",
-                "Description for quiz item 0",
+                binding.textInputDescription.text.toString(),
                 "id_0",
-                "Quiz Title 0"
+                binding.textInputTitle.text.toString()
             )
 
             startQuizIntent.putExtra(QUIZ_EXTRA, quiz)

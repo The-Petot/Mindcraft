@@ -8,6 +8,7 @@
     tools:context=".ui.home.quiz.start.StartQuizActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -31,6 +32,10 @@
                 android:text="15:00"/>
 
         </com.google.android.material.appbar.MaterialToolbar>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -87,7 +92,7 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="128dp"
                 android:text="Submit"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
