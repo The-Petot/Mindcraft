@@ -50,6 +50,10 @@ class SettingsProfileActivity : AppCompatActivity() {
             settingsBottomSheetPassword.show(supportFragmentManager, SettingsBottomSheetPassword.TAG)
         }
 
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         // Bind UI elements
 //        profileImageView = findViewById(R.id.img_profile)
 //        firstNameEditText = findViewById(R.id.firstNameEditText)
