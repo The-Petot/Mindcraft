@@ -38,16 +38,15 @@ class RankingAdapter : ListAdapter<RankingUserModel, RankingAdapter.RankingViewH
                 oldItem: RankingUserModel,
                 newItem: RankingUserModel
             ): Boolean {
-                TODO("Not yet implemented")
+                return oldItem == newItem
             }
 
             override fun areContentsTheSame(
                 oldItem: RankingUserModel,
                 newItem: RankingUserModel
             ): Boolean {
-                TODO("Not yet implemented")
+                return oldItem == newItem
             }
-
 
         }
     }

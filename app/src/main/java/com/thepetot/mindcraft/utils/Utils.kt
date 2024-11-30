@@ -9,6 +9,7 @@ import android.util.Base64
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.viewpager2.widget.ViewPager2
 import com.thepetot.mindcraft.data.dummy.RankingUserModel
+import com.thepetot.mindcraft.data.dummy.SearchHistoryModel
 import com.thepetot.mindcraft.data.remote.response.ListQuestionsItem
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
 import com.thepetot.mindcraft.data.remote.response.Options
@@ -16,7 +17,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.random.Random
-
 
 fun generateDummyData(count: Int): List<ListQuizItem> {
 
@@ -87,6 +87,42 @@ fun generateDummyQuizItems(): List<ListQuizItem> {
             description = "Who wrote 'Romeo and Juliet'?",
             id = "5",
             title = "Literature Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:20:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "Who wrote 'Romeo and Juliet'?",
+            id = "5",
+            title = "Literature Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:20:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "Who wrote 'Romeo and Juliet'?",
+            id = "5",
+            title = "Literature Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:20:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "Who wrote 'Romeo and Juliet'?",
+            id = "5",
+            title = "Literature Quiz"
+        ),
+        ListQuizItem(
+            duration = 900,
+            createdAt = "2024-01-01T08:20:00.000Z",
+            question = 5,
+            author = "Admin",
+            description = "Who wrote 'Romeo and Juliet'?",
+            id = "5",
+            title = "Literature Quiz"
         )
     )
 }
@@ -148,6 +184,17 @@ fun generateDummyQuestions(): List<ListQuestionsItem> {
             correctAnswer = "B",
             explanation = "William Shakespeare is the author of 'Romeo and Juliet.'"
         )
+    )
+}
+
+fun generateSearchHistoryDummy(): List<SearchHistoryModel> {
+    return listOf(
+        SearchHistoryModel("Soal MTK"),
+        SearchHistoryModel("Soal IPA"),
+        SearchHistoryModel("Soal IPS"),
+        SearchHistoryModel("Soal Bahasa Inggris"),
+        SearchHistoryModel("Soal Bahasa Indonesia"),
+        SearchHistoryModel("Soal Informatika"),
     )
 }
 
