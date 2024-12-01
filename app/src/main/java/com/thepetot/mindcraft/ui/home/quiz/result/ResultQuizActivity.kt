@@ -29,7 +29,15 @@ class ResultQuizActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemBars = insets.getInsets(
+                // Notice we're using systemBars, not statusBar
+                WindowInsetsCompat.Type.systemBars()
+                        // Notice we're also accounting for the display cutouts
+                        or WindowInsetsCompat.Type.displayCutout()
+                // If using EditText, also add
+                // "or WindowInsetsCompat.Type.ime()"
+                // to maintain focus when opening the IME
+            )
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
