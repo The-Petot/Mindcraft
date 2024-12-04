@@ -1,8 +1,8 @@
-package com.thepetot.mindcraft.data.remote.response.login
+package com.thepetot.mindcraft.data.remote.response.user
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse(
+data class UserResponse(
 
 	@field:SerializedName("data")
 	val data: Data,
@@ -18,6 +18,15 @@ data class LoginResponse(
 
 	@field:SerializedName("errors")
 	val errors: List<ErrorsItem>
+)
+
+data class ErrorsItem(
+
+	@field:SerializedName("field")
+	val field: String,
+
+	@field:SerializedName("messages")
+	val messages: List<String>
 )
 
 data class Data(
@@ -41,7 +50,7 @@ data class Data(
 	val profileImgUrl: String,
 
 	@field:SerializedName("twoFactorSecret")
-	val twoFactorSecret: String? = null,
+	val twoFactorSecret: String,
 
 	@field:SerializedName("id")
 	val id: Int,
@@ -56,38 +65,35 @@ data class Data(
 	val notificationEnabled: Boolean,
 
 	@field:SerializedName("updatedAt")
-	val updatedAt: String,
-
-	@field:SerializedName("accessToken")
-	var accessToken: String,
-
-	@field:SerializedName("refreshToken")
-	var refreshToken: String,
-
-	@field:SerializedName("sessionId")
-	var sessionId: String
-)
-
-data class ErrorsItem(
-
-	@field:SerializedName("field")
-	val field: String,
-
-	@field:SerializedName("messages")
-	val messages: List<String>
+	val updatedAt: String
 )
 
 data class Links(
 
-	@field:SerializedName("logout")
-	val logout: String,
+	@field:SerializedName("createUserParticipation")
+	val createUserParticipation: String,
 
-	@field:SerializedName("tokenRefresh")
-	val tokenRefresh: String,
+	@field:SerializedName("deleteUserChallenge")
+	val deleteUserChallenge: String,
+
+	@field:SerializedName("userChallenges")
+	val userChallenges: String,
+
+	@field:SerializedName("createUserChallenge")
+	val createUserChallenge: String,
+
+	@field:SerializedName("deleteUser")
+	val deleteUser: String,
 
 	@field:SerializedName("self")
 	val self: String,
 
-	@field:SerializedName("toggleTwoFactorAuth")
-	val toggleTwoFactorAuth: String
+	@field:SerializedName("updateUser")
+	val updateUser: String,
+
+	@field:SerializedName("users")
+	val users: String,
+
+	@field:SerializedName("userParticipations")
+	val userParticipations: String
 )

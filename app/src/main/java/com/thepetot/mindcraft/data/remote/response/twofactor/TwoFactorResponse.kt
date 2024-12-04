@@ -1,8 +1,8 @@
-package com.thepetot.mindcraft.data.remote.response.signup
+package com.thepetot.mindcraft.data.remote.response.twofactor
 
 import com.google.gson.annotations.SerializedName
 
-data class SignupResponse(
+data class TwoFactorResponse(
 
 	@field:SerializedName("data")
 	val data: Data,
@@ -25,9 +25,6 @@ data class Links(
 	@field:SerializedName("logout")
 	val logout: String,
 
-	@field:SerializedName("tokenRefresh")
-	val tokenRefresh: String,
-
 	@field:SerializedName("self")
 	val self: String,
 
@@ -38,6 +35,18 @@ data class Links(
 	val login: String
 )
 
+data class Data(
+
+	@field:SerializedName("qrCode")
+	val qrCode: String,
+
+	@field:SerializedName("secret")
+	val secret: String,
+
+	@field:SerializedName("userId")
+	val userId: Int
+)
+
 data class ErrorsItem(
 
 	@field:SerializedName("field")
@@ -45,10 +54,4 @@ data class ErrorsItem(
 
 	@field:SerializedName("messages")
 	val messages: List<String>
-)
-
-data class Data(
-
-	@field:SerializedName("userId")
-	val userId: Int
 )

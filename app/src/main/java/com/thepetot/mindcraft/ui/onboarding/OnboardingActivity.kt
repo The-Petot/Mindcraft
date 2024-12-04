@@ -1,7 +1,12 @@
 package com.thepetot.mindcraft.ui.onboarding
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.PathInterpolator
 import androidx.activity.enableEdgeToEdge
@@ -15,7 +20,12 @@ import com.thepetot.mindcraft.databinding.ActivityOnboardingBinding
 import com.thepetot.mindcraft.ui.adapter.OnboardingAdapter
 import com.thepetot.mindcraft.ui.login.LoginActivity
 import com.thepetot.mindcraft.ui.main.MainActivity
+import com.thepetot.mindcraft.ui.settings.SettingsFragment.Companion.CHANNEL_DESC
+import com.thepetot.mindcraft.ui.settings.SettingsFragment.Companion.CHANNEL_ID
+import com.thepetot.mindcraft.ui.settings.SettingsFragment.Companion.CHANNEL_IMPORTANCE
+import com.thepetot.mindcraft.ui.settings.SettingsFragment.Companion.CHANNEL_NAME
 import com.thepetot.mindcraft.utils.SharedPreferencesManager
+import com.thepetot.mindcraft.utils.logMessage
 import com.thepetot.mindcraft.utils.setCurrentItem
 import kotlin.math.abs
 
@@ -48,8 +58,7 @@ class OnboardingActivity : AppCompatActivity() {
             insets
         }
 
-
-
+        buildNotificationChannel()
         initViewPager()
         setupButtons()
     }
@@ -134,6 +143,27 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun updateButtonVisibility(position: Int) {
         binding.btnBack.visibility = if (position == 0) View.GONE else View.VISIBLE
+    }
+
+    private fun buildNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val existingChannel = notificationManager.getNotificationChannel(CHANNEL_ID)
+            if (existingChannel != null) {
+                logMessage(Log::w, "Notification", "Notification channel already exists")
+                return
+            }
+
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, CHANNEL_IMPORTANCE).apply {
+                description = CHANNEL_DESC
+                enableLights(true)
+                lightColor = android.graphics.Color.GREEN // Light color
+                enableVibration(true) // Enable vibration
+            }
+
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     companion object {

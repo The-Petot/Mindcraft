@@ -11,8 +11,8 @@ import com.thepetot.mindcraft.utils.Result
 
 class SignupViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    private val _signupResult = MediatorLiveData<Result<SignupResponse>>()
-    val signupResult: LiveData<Result<SignupResponse>> get() = _signupResult
+    private val _signupResult = MediatorLiveData<Result<SignupResponse>?>()
+    val signupResult: LiveData<Result<SignupResponse>?> get() = _signupResult
 
     fun signup(firstName: String, lastName: String, email: String, password: String) {
         val signupBody = SignupBody(firstName, lastName, password, email)
@@ -25,5 +25,9 @@ class SignupViewModel(private val userRepository: UserRepository) : ViewModel() 
                 _signupResult.removeSource(source)
             }
         }
+    }
+
+    fun clearSignup() {
+        _signupResult.value = null
     }
 }

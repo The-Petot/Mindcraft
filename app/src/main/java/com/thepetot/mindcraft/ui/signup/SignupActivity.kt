@@ -52,6 +52,7 @@ class SignupActivity : AppCompatActivity() {
                 is Result.Error -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
                     Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                    viewModel.clearSignup()
                 }
                 is Result.Loading -> {
                     binding.progressIndicator.visibility = View.VISIBLE
@@ -59,8 +60,10 @@ class SignupActivity : AppCompatActivity() {
                 is Result.Success -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
                     Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    viewModel.clearSignup()
                     finish()
                 }
+                null -> {}
             }
         }
     }
@@ -143,6 +146,7 @@ class SignupActivity : AppCompatActivity() {
                     binding.etLayoutConfirmPassword.error = binding.etLayoutConfirmPassword.error ?: "Confirm Password is required"
                 }
                 else -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
                     // TODO: Implement actual signup mechanism
                     val firstName = binding.etFirstName.text.toString()
                     val lastName = binding.etLastName.text.toString()

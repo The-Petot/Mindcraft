@@ -6,8 +6,10 @@ import android.animation.ValueAnimator
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.viewpager2.widget.ViewPager2
+import com.thepetot.mindcraft.BuildConfig
 import com.thepetot.mindcraft.data.dummy.RankingUserModel
 import com.thepetot.mindcraft.data.dummy.SearchHistoryModel
 import com.thepetot.mindcraft.data.remote.response.ListQuestionsItem
@@ -289,5 +291,22 @@ fun decodeBase64ToBitmap(base64String: String): Bitmap? {
     } catch (e: IllegalArgumentException) {
         e.printStackTrace()
         null
+    }
+}
+
+fun logMessage(
+    logFunction: (String, String, Throwable?) -> Int,
+    tag: String,
+    message: String,
+    throwable: Throwable? = null
+) {
+    if (BuildConfig.DEBUG) {
+        logFunction(tag, message, throwable)
+    }
+}
+
+fun logMessage(tag: String, message: String) {
+    if (BuildConfig.DEBUG) {
+        Log.i(tag, message)
     }
 }

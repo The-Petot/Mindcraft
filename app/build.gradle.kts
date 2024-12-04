@@ -86,13 +86,11 @@ dependencies {
     implementation(libs.github.glide)
     annotationProcessor(libs.compiler)
 
-    // Firebase Auth
+    // Firebase
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
-
-    // Design
-//    implementation(libs.design)
+    implementation(libs.firebase.messaging)
 }

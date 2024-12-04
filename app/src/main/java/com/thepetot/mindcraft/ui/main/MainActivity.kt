@@ -1,18 +1,18 @@
 package com.thepetot.mindcraft.ui.main
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.databinding.ActivityMainBinding
+import com.thepetot.mindcraft.utils.logMessage
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,5 +34,13 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         navView.setupWithNavController(navController)
 
+        Firebase.messaging.subscribeToTopic("notification")
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed"
+                if (!task.isSuccessful) {
+                    msg = "Subscribe failed"
+                }
+                logMessage("MainActivity", msg)
+            }
     }
 }

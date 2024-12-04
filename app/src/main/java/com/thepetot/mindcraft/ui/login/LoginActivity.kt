@@ -39,6 +39,7 @@ import com.thepetot.mindcraft.ui.onboarding.OnboardingActivity.Companion.USER_LO
 import com.thepetot.mindcraft.ui.signup.SignupActivity
 import com.thepetot.mindcraft.utils.Result
 import com.thepetot.mindcraft.utils.SharedPreferencesManager
+import com.thepetot.mindcraft.utils.logMessage
 import kotlinx.coroutines.launch
 
 
@@ -84,16 +85,20 @@ class LoginActivity : AppCompatActivity() {
                 is Result.Error -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
                     Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                    viewModel.clearLogin()
                 }
                 is Result.Loading -> {
                     binding.progressIndicator.visibility = View.VISIBLE
                 }
                 is Result.Success -> {
+                    Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
                     binding.progressIndicator.visibility = View.INVISIBLE
                     viewModel.saveUserData(result.data)
                     SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
+                    viewModel.clearLogin()
                     navigateToMainPage()
                 }
+                null -> {}
             }
         }
     }
@@ -135,6 +140,7 @@ class LoginActivity : AppCompatActivity() {
                     binding.etLayoutPassword.error = binding.etLayoutPassword.error ?: "Password is required"
                 }
                 else -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
                     // TODO: Implement actual login mechanism
                     val email = binding.etEmail.text.toString()
                     val password = binding.etPassword.text.toString()
@@ -158,13 +164,15 @@ class LoginActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
+                    binding.progressIndicator.visibility = View.VISIBLE
                     val result: GetCredentialResponse = credentialManager.getCredential( //import from androidx.CredentialManager
                         request = request,
                         context = this@LoginActivity,
                     )
                     handleSignIn(result)
                 } catch (e: GetCredentialException) { //import from androidx.CredentialManager
-                    Log.d("Error", e.message.toString())
+                    binding.progressIndicator.visibility = View.INVISIBLE
+                    logMessage("Error", e.message.toString())
                 }
             }
         }
@@ -179,16 +187,17 @@ class LoginActivity : AppCompatActivity() {
                         val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                         firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
                     } catch (e: GoogleIdTokenParsingException) {
-                        Log.e(TAG, "Received an invalid google id token response", e)
+//                        Log.e(TAG, "Received an invalid google id token response", e)
+                        logMessage(Log::e, TAG, "Received an invalid google id token response", e)
                     }
                 } else {
                     // Catch any unrecognized custom credential type here.
-                    Log.e(TAG, "Unexpected type of credential")
+                    logMessage(TAG, "Unexpected type of credential")
                 }
             }
             else -> {
                 // Catch any unrecognized credential type here.
-                Log.e(TAG, "Unexpected type of credential")
+                logMessage(TAG, "Unexpected type of credential")
             }
         }
     }
@@ -198,21 +207,23 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithCredential:success")
+                    logMessage(TAG, "signInWithCredential:success")
                     val user: FirebaseUser? = auth.currentUser
                     if (user != null) {
-                        SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
-                        navigateToMainPage()
+                        viewModel.oAuthLogin(idToken)
+//                        SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
+//                        navigateToMainPage()
                     }
                 } else {
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+//                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    logMessage(Log::w, TAG, "signInWithCredential:failure", task.exception)
                 }
             }
     }
 
     private fun showOtpDialog() {
         // Inflate the custom layout
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.otp_dialog, null)
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_otp, null)
 
         // Get references to input fields
         val otpInputLayout = dialogView.findViewById<TextInputLayout>(R.id.otp_input_layout)

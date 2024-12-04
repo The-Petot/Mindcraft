@@ -11,7 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_session")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences")
 
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>){
 
@@ -21,9 +21,14 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences[FIRST_NAME_KEY] = dataUser.firstName
             preferences[LAST_NAME_KEY] = dataUser.lastName
             preferences[EMAIL_KEY] = dataUser.email
-            preferences[PASSWORD_KEY] = dataUser.password
+            preferences[TOTAL_SCORE_KEY] = dataUser.totalScore
+            preferences[CURRENT_RANK_KEY] = dataUser.currentRank
             preferences[PROFILE_PICTURE_KEY] = dataUser.profilePicture
-            preferences[IS_2FA_KEY] = dataUser.is2FA
+            preferences[TWO_FACTOR_ENABLE_KEY] = dataUser.twoFactorEnable
+            preferences[TWO_FACTOR_SECRET_KEY] = dataUser.twoFactorSecret ?: ""
+            preferences[NOTIFICATION_ENABLED_KEY] = dataUser.notificationEnabled
+            preferences[CREATED_AT_KEY] = dataUser.createdAt
+            preferences[UPDATED_AT_KEY] = dataUser.updatedAt
             preferences[ACCESS_TOKEN_KEY] = dataUser.accessToken
             preferences[REFRESH_TOKEN_KEY] = dataUser.refreshToken
             preferences[SESSION_ID_KEY] = dataUser.sessionId
@@ -37,9 +42,14 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
                 preferences[FIRST_NAME_KEY] ?: "",
                 preferences[LAST_NAME_KEY] ?: "",
                 preferences[EMAIL_KEY] ?: "",
-                preferences[PASSWORD_KEY] ?: "",
+                preferences[TOTAL_SCORE_KEY] ?: 0,
+                preferences[CURRENT_RANK_KEY] ?: 0,
                 preferences[PROFILE_PICTURE_KEY] ?: "",
-                preferences[IS_2FA_KEY] ?: false,
+                preferences[TWO_FACTOR_ENABLE_KEY] ?: false,
+                preferences[TWO_FACTOR_SECRET_KEY] ?: "",
+                preferences[NOTIFICATION_ENABLED_KEY] ?: false,
+                preferences[CREATED_AT_KEY] ?: "",
+                preferences[UPDATED_AT_KEY] ?: "",
                 preferences[ACCESS_TOKEN_KEY] ?: "",
                 preferences[REFRESH_TOKEN_KEY] ?: "",
                 preferences[SESSION_ID_KEY] ?: ""
@@ -53,9 +63,14 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences.remove(FIRST_NAME_KEY)
             preferences.remove(LAST_NAME_KEY)
             preferences.remove(EMAIL_KEY)
-            preferences.remove(PASSWORD_KEY)
+            preferences.remove(TOTAL_SCORE_KEY)
+            preferences.remove(CURRENT_RANK_KEY)
             preferences.remove(PROFILE_PICTURE_KEY)
-            preferences.remove(IS_2FA_KEY)
+            preferences.remove(TWO_FACTOR_ENABLE_KEY)
+            preferences.remove(TWO_FACTOR_SECRET_KEY)
+            preferences.remove(NOTIFICATION_ENABLED_KEY)
+            preferences.remove(CREATED_AT_KEY)
+            preferences.remove(UPDATED_AT_KEY)
             preferences.remove(ACCESS_TOKEN_KEY)
             preferences.remove(REFRESH_TOKEN_KEY)
             preferences.remove(SESSION_ID_KEY)
@@ -85,16 +100,21 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         @Volatile
         private var INSTANCE: UserPreference? = null
 
-        private val USERID_KEY = intPreferencesKey("userId")
-        private val FIRST_NAME_KEY = stringPreferencesKey("firstName")
-        private val LAST_NAME_KEY = stringPreferencesKey("lastName")
-        private val EMAIL_KEY = stringPreferencesKey("email")
-        private val PASSWORD_KEY = stringPreferencesKey("password")
-        private val PROFILE_PICTURE_KEY = stringPreferencesKey("profilePicture")
-        private val IS_2FA_KEY = booleanPreferencesKey("is2FA")
-        private val ACCESS_TOKEN_KEY = stringPreferencesKey("accessToken")
-        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refreshToken")
-        private val SESSION_ID_KEY = stringPreferencesKey("sessionId")
+        val USERID_KEY = intPreferencesKey("userId")
+        val FIRST_NAME_KEY = stringPreferencesKey("firstName")
+        val LAST_NAME_KEY = stringPreferencesKey("lastName")
+        val EMAIL_KEY = stringPreferencesKey("email")
+        val TOTAL_SCORE_KEY = intPreferencesKey("totalScore")
+        val CURRENT_RANK_KEY = intPreferencesKey("currentRank")
+        val PROFILE_PICTURE_KEY = stringPreferencesKey("profilePicture")
+        val TWO_FACTOR_ENABLE_KEY = booleanPreferencesKey("twoFactorEnable")
+        val TWO_FACTOR_SECRET_KEY = stringPreferencesKey("twoFactorSecret")
+        val NOTIFICATION_ENABLED_KEY = booleanPreferencesKey("notificationEnabled")
+        val CREATED_AT_KEY = stringPreferencesKey("createdAt")
+        val UPDATED_AT_KEY = stringPreferencesKey("updatedAt")
+        val ACCESS_TOKEN_KEY = stringPreferencesKey("accessToken")
+        val REFRESH_TOKEN_KEY = stringPreferencesKey("refreshToken")
+        val SESSION_ID_KEY = stringPreferencesKey("sessionId")
 
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {
