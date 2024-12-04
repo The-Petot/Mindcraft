@@ -16,8 +16,14 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _loginResult = MediatorLiveData<Result<LoginResponse>?>()
     val loginResult: LiveData<Result<LoginResponse>?> get() = _loginResult
 
-    fun login(email: String, password: String, token: String? = null) {
-        val loginBody = LoginBody(password, email, token)
+    private val _loginOTPResult = MediatorLiveData<Result<LoginResponse>?>()
+    val loginOTPResult: LiveData<Result<LoginResponse>?> get() = _loginOTPResult
+
+    var email: String = ""
+    var password: String = ""
+
+    fun login(email: String, password: String) {
+        val loginBody = LoginBody(password, email, null)
         val source = userRepository.login(loginBody)
         _loginResult.addSource(source) { result ->
             _loginResult.value = result
@@ -29,8 +35,25 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
+    fun loginOTP(email: String, password: String, token: String) {
+        val loginBody = LoginBody(password, email, token)
+        val source = userRepository.login(loginBody)
+        _loginOTPResult.addSource(source) { result ->
+            _loginOTPResult.value = result
+
+            // Remove the source when the operation is complete
+            if (result is Result.Success || result is Result.Error) {
+                _loginOTPResult.removeSource(source)
+            }
+        }
+    }
+
     fun clearLogin() {
         _loginResult.value = null
+    }
+
+    fun clearOTPLogin() {
+        _loginOTPResult.value = null
     }
 
     fun oAuthLogin(token: String) {

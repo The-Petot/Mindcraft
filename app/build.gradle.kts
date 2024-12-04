@@ -93,4 +93,7 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.firebase.messaging)
+
+    // Image Cropper
+    implementation(libs.android.image.cropper)
 }

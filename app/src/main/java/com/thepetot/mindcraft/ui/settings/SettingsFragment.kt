@@ -2,7 +2,6 @@ package com.thepetot.mindcraft.ui.settings
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.NotificationManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +16,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -69,6 +69,11 @@ class SettingsFragment : Fragment() {
     private lateinit var currentTheme: TextView
 
     private lateinit var progressBar: LinearProgressIndicator
+
+    private lateinit var dialogView: View
+    private lateinit var dialog: AlertDialog
+
+    private var switchState: Boolean = false
 
     private val requestNotificationPermission =
         registerForActivityResult(
@@ -183,16 +188,22 @@ class SettingsFragment : Fragment() {
     // TODO: Not done yet
     private fun setup2FA() {
         // init state
-        val switchState = viewModel.getPreferenceSettings(UserPreference.TWO_FACTOR_ENABLE_KEY, false)
+        switchState = viewModel.getPreferenceSettings(UserPreference.TWO_FACTOR_ENABLE_KEY, false)
         switchTwoStepVerification.isChecked = switchState
         viewModel.is2FASwitchChecked = switchState
         switchTwoStepVerification.jumpDrawablesToCurrentState()
 
         // on click
         twoStepVerification.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            triggerTwoFactor()
-            toggle2FAState(false)
+            switchState = viewModel.getPreferenceSettings(UserPreference.TWO_FACTOR_ENABLE_KEY, false)
+            if (switchState) {
+                setTwoFactor()
+                toggle2FAState(false)
+            } else {
+                progressBar.visibility = View.VISIBLE
+                getTwoFactor()
+                toggle2FAState(false)
+            }
         }
 
         // on checked change
@@ -203,48 +214,72 @@ class SettingsFragment : Fragment() {
         }
 
         // observe
-        viewModel.twoFactorResult.observe(viewLifecycleOwner) { result ->
+        viewModel.setTwoFactorResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Error -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
                     progressBar.visibility = View.INVISIBLE
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.isClickable = true
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.isEnabled = true
                     Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
-                    toggle2FAState(true)
-                    viewModel.clearTwoFactor()
+                    viewModel.clearSetTwoFactor()
                 }
 
                 is Result.Loading -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
                     progressBar.visibility = View.VISIBLE
                 }
 
                 is Result.Success -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
                     progressBar.visibility = View.INVISIBLE
-                    change2FASwitchState()
-                    if (viewModel.is2FASwitchChecked) {
-                        show2FASecretDialog(result.data)
-                    } else {
-                        toggle2FASwitch()
-                        Toast.makeText(requireContext(), result.data.message, Toast.LENGTH_SHORT).show()
-                        toggle2FAState(true)
-                        viewModel.clearTwoFactor()
-                    }
+                    dialog.dismiss()
+                    viewModel.clearSetTwoFactor()
+                    toggle2FASwitch()
+                    toggle2FAState(true)
+                    Toast.makeText(requireContext(), result.data.message, Toast.LENGTH_SHORT).show()
                 }
 
                 null -> {}
             }
         }
+
+        viewModel.getTwoFactorResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Error -> {
+                    progressBar.visibility = View.INVISIBLE
+                    Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
+                    toggle2FAState(true)
+                    viewModel.clearGetTwoFactor()
+                }
+                is Result.Loading -> {
+                    progressBar.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    progressBar.visibility = View.INVISIBLE
+                    show2FASecretDialog(result.data)
+                }
+                null -> {}
+            }
+        }
     }
 
-    private fun triggerTwoFactor() {
+    private fun setTwoFactor() {
         val userId = viewModel.getPreferenceSettings(UserPreference.USERID_KEY, 0)
         val secret = viewModel.getPreferenceSettings(UserPreference.TWO_FACTOR_SECRET_KEY, "")
-        viewModel.twoFactor(viewModel.is2FASwitchChecked, userId, secret, "123123")
+        showTokenInputDialog(false, userId, secret)
     }
 
-    private fun change2FASwitchState() {
-        viewModel.is2FASwitchChecked = !viewModel.is2FASwitchChecked
+    private fun getTwoFactor() {
+        viewModel.getTwoFactor()
     }
+
+//    private fun change2FASwitchState() {
+//        viewModel.is2FASwitchChecked = !viewModel.is2FASwitchChecked
+//    }
 
     private fun toggle2FASwitch() {
+        viewModel.is2FASwitchChecked = !viewModel.is2FASwitchChecked
         switchTwoStepVerification.isChecked = viewModel.is2FASwitchChecked
     }
 
@@ -277,21 +312,25 @@ class SettingsFragment : Fragment() {
         dialog.show()
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
-            showTokenInputDialog(response)
+            val userId = viewModel.getPreferenceSettings(UserPreference.USERID_KEY, 0)
+            val secret = response.data.secret
+            viewModel.clearGetTwoFactor()
             dialog.dismiss()
+            showTokenInputDialog(true, userId, secret)
         }
     }
 
-    private fun showTokenInputDialog(response: TwoFactorResponse) {
+    private fun showTokenInputDialog(state: Boolean, userId: Int, secret: String) {
         // Inflate the custom layout
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_otp, null)
+        dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_otp, null)
 
         // Get references to input fields
         val otpInputLayout = dialogView.findViewById<TextInputLayout>(R.id.otp_input_layout)
         val otpEditText = dialogView.findViewById<TextInputEditText>(R.id.et_otp)
+        val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
 
         // Build the dialog
-        val dialog = MaterialAlertDialogBuilder(requireContext())
+        dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
             .setPositiveButton("Submit", null)
             .setNegativeButton("Cancel", null)
@@ -307,18 +346,19 @@ class SettingsFragment : Fragment() {
                 otpInputLayout.error = "Please enter a valid 6-digit OTP"
                 otpInputLayout.errorIconDrawable = null
             } else {
-                otpInputLayout.error = null
-
                 // TODO: add verification OTP by hitting the endpoint
-                viewModel.secretCode = response.data.secret
-                toggle2FASwitch()
-                toggle2FAState(true)
-                dialog.dismiss()
+                viewModel.secretCode = secret
+                progressBar.visibility = View.VISIBLE
+                otpInputLayout.error = null
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.isClickable = false
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.isEnabled = false
+                viewModel.setTwoFactor(state, userId, secret, otpCode)
             }
         }
 
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setOnClickListener {
-            change2FASwitchState()
+            viewModel.clearSetTwoFactor()
+            println("CLEAR SET TWO FACTOR")
             toggle2FAState(true)
             dialog.dismiss()
         }

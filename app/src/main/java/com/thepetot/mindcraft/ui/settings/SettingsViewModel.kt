@@ -1,10 +1,8 @@
 package com.thepetot.mindcraft.ui.settings
 
-import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thepetot.mindcraft.data.remote.response.logout.LogoutBody
@@ -12,7 +10,6 @@ import com.thepetot.mindcraft.data.remote.response.logout.LogoutResponse
 import com.thepetot.mindcraft.data.remote.response.twofactor.TwoFactorBody
 import com.thepetot.mindcraft.data.remote.response.twofactor.TwoFactorResponse
 import com.thepetot.mindcraft.data.repository.UserRepository
-import com.thepetot.mindcraft.utils.SharedPreferencesManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -27,8 +24,11 @@ class SettingsViewModel(private val userRepository: UserRepository) : ViewModel(
     private val _logoutResult = MediatorLiveData<Result<LogoutResponse>?>()
     val logoutResult: LiveData<Result<LogoutResponse>?> get() = _logoutResult
 
-    private val _twoFactorResult = MediatorLiveData<Result<TwoFactorResponse>?>()
-    val twoFactorResult: LiveData<Result<TwoFactorResponse>?> get() = _twoFactorResult
+    private val _setTwoFactorResult = MediatorLiveData<Result<TwoFactorResponse>?>()
+    val setTwoFactorResult: LiveData<Result<TwoFactorResponse>?> get() = _setTwoFactorResult
+
+    private val _getTwoFactorResult = MediatorLiveData<Result<TwoFactorResponse>?>()
+    val getTwoFactorResult: LiveData<Result<TwoFactorResponse>?> get() = _getTwoFactorResult
 
     fun logout(userId: Int) {
         val logoutBody = LogoutBody(userId)
@@ -43,19 +43,33 @@ class SettingsViewModel(private val userRepository: UserRepository) : ViewModel(
         }
     }
 
-    fun twoFactor(enable: Boolean, userId: Int, secret: String, token: String) {
+    fun setTwoFactor(enable: Boolean, userId: Int, secret: String, token: String) {
         val twoFactorBody = TwoFactorBody(userId, secret, token)
-        val source = userRepository.twoFactor(enable, twoFactorBody)
-        _twoFactorResult.addSource(source) {
-            _twoFactorResult.value = it
+        val source = userRepository.setTwoFactor(enable, twoFactorBody)
+        _setTwoFactorResult.addSource(source) {
+            _setTwoFactorResult.value = it
             if (it is Result.Success || it is Result.Error) {
-                _twoFactorResult.removeSource(source)
+                _setTwoFactorResult.removeSource(source)
             }
         }
     }
 
-    fun clearTwoFactor() {
-        _twoFactorResult.value = null
+    fun getTwoFactor() {
+        val source = userRepository.getTwoFactor()
+        _getTwoFactorResult.addSource(source) {
+            _getTwoFactorResult.value = it
+            if (it is Result.Success || it is Result.Error) {
+                _getTwoFactorResult.removeSource(source)
+            }
+        }
+    }
+
+    fun clearSetTwoFactor() {
+        _setTwoFactorResult.value = null
+    }
+
+    fun clearGetTwoFactor() {
+        _getTwoFactorResult.value = null
     }
 
     fun clearLogout() {

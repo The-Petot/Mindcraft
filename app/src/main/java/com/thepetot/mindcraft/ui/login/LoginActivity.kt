@@ -1,6 +1,5 @@
 package com.thepetot.mindcraft.ui.login
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -23,6 +23,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.AuthCredential
@@ -31,7 +32,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import com.thepetot.mindcraft.R
+import com.thepetot.mindcraft.data.remote.response.login.LoginResponse
 import com.thepetot.mindcraft.databinding.ActivityLoginBinding
 import com.thepetot.mindcraft.ui.ViewModelFactory
 import com.thepetot.mindcraft.ui.main.MainActivity
@@ -50,6 +53,9 @@ class LoginActivity : AppCompatActivity() {
     private val viewModel by viewModels<LoginViewModel> {
         ViewModelFactory.getInstance(this)
     }
+
+    private lateinit var dialogView: View
+    private lateinit var dialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,7 +90,20 @@ class LoginActivity : AppCompatActivity() {
             when (result) {
                 is Result.Error -> {
                     binding.progressIndicator.visibility = View.INVISIBLE
-                    Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                    val gson = Gson()
+                    val parsedError = gson.fromJson(result.error, LoginResponse::class.java)
+                    val tokenError = parsedError.errors.find { it.field == "token" }
+                    val passwordError = parsedError.errors.find { it.field == "password" }
+                    val email = parsedError.errors.find { it.field == "email" }
+                    if (tokenError != null) {
+                        showOtpDialog()
+                    } else if (passwordError != null) {
+                        Toast.makeText(this, passwordError.messages.first(), Toast.LENGTH_SHORT).show()
+                    } else if (email != null) {
+                        Toast.makeText(this, email.messages.first(), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, parsedError.errors.first().messages.first(), Toast.LENGTH_SHORT).show()
+                    }
                     viewModel.clearLogin()
                 }
                 is Result.Loading -> {
@@ -96,6 +115,41 @@ class LoginActivity : AppCompatActivity() {
                     viewModel.saveUserData(result.data)
                     SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
                     viewModel.clearLogin()
+                    navigateToMainPage()
+                }
+                null -> {}
+            }
+        }
+
+        viewModel.loginOTPResult.observe(this) { result ->
+            when (result) {
+                is Result.Error -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
+                    progressBar.visibility = View.INVISIBLE
+                    val gson = Gson()
+                    val parsedError = gson.fromJson(result.error, LoginResponse::class.java)
+                    val tokenError = parsedError.errors.find { it.field == "token" }
+                    if (tokenError != null) {
+                        Toast.makeText(this, tokenError.messages.first(), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, parsedError.errors.first().messages.first(), Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+                    viewModel.clearOTPLogin()
+                }
+                is Result.Loading -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
+                    progressBar.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
+                    dialog.dismiss()
+                    progressBar.visibility = View.INVISIBLE
+                    Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    viewModel.saveUserData(result.data)
+                    SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
+                    viewModel.clearOTPLogin()
+                    dialog.dismiss()
                     navigateToMainPage()
                 }
                 null -> {}
@@ -144,8 +198,9 @@ class LoginActivity : AppCompatActivity() {
                     // TODO: Implement actual login mechanism
                     val email = binding.etEmail.text.toString()
                     val password = binding.etPassword.text.toString()
+                    viewModel.email = email
+                    viewModel.password = password
                     viewModel.login(email, password)
-                    //showOtpDialog()
                 }
             }
         }
@@ -223,17 +278,21 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showOtpDialog() {
         // Inflate the custom layout
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_otp, null)
+        dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_otp, null)
 
         // Get references to input fields
         val otpInputLayout = dialogView.findViewById<TextInputLayout>(R.id.otp_input_layout)
         val otpEditText = dialogView.findViewById<TextInputEditText>(R.id.et_otp)
+        val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
 
         // Build the dialog
-        val dialog = MaterialAlertDialogBuilder(this)
+        dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogView)
             .setPositiveButton("Submit", null)
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                viewModel.clearOTPLogin()
+                dialog.dismiss()
+            }
             .create()
 
         dialog.show()
@@ -246,12 +305,9 @@ class LoginActivity : AppCompatActivity() {
                 otpInputLayout.error = "Please enter a valid 6-digit OTP"
                 otpInputLayout.errorIconDrawable = null
             } else {
+                progressBar.visibility = View.VISIBLE
                 otpInputLayout.error = null
-                // Handle OTP submission
-//                handleOtpSubmission(otpCode)
-                // TODO: Implement actual OTP mechanism
-                dialog.dismiss() // Dismiss only if there's no error
-
+                viewModel.loginOTP(viewModel.email, viewModel.password, otpCode)
             }
         }
     }

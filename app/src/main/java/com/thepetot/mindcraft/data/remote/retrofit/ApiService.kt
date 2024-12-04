@@ -32,10 +32,13 @@ interface ApiService {
     suspend fun logout(@Body logoutBody: LogoutBody): Response<LogoutResponse>
 
     @PUT("auth/two-factor")
-    suspend fun twoFactor(
+    suspend fun setTwoFactor(
         @Query("enable") enable: Boolean,
         @Body twoFactorBody: TwoFactorBody
     ): Response<TwoFactorResponse>
+
+    @GET("auth/two-factor")
+    suspend fun getTwoFactor(): Response<TwoFactorResponse>
 
     @GET("users/{userId}")
     suspend fun getUserById(@Path("userId") userId: Int): Response<UserResponse>

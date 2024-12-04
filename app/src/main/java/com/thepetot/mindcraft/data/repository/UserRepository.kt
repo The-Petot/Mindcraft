@@ -87,11 +87,7 @@ class UserRepository private constructor(
             } else {
                 try {
                     val errorBody = response.errorBody()?.string()
-                    val gson = Gson()
-                    val parsedError = gson.fromJson(errorBody, LoginResponse::class.java)
-//                    val message = parsedError.errors[0].messages[0]
-                    val message = parsedError.errors.first().messages.first()
-                    emit(Result.Error(message))
+                    emit(Result.Error(errorBody!!))
                 } catch (parseException: Exception) {
                     logMessage(TAG, "Error parsing HTTP exception response: ${parseException.message}")
                     emit(Result.Error("Error parsing HTTP exception response"))
@@ -181,10 +177,38 @@ class UserRepository private constructor(
         }
     }
 
-    fun twoFactor(enable: Boolean, twoFactorBody: TwoFactorBody): LiveData<Result<TwoFactorResponse>> = liveData {
+    fun setTwoFactor(enable: Boolean, twoFactorBody: TwoFactorBody): LiveData<Result<TwoFactorResponse>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.twoFactor(enable, twoFactorBody)
+            val response = apiService.setTwoFactor(enable, twoFactorBody)
+            if (response.isSuccessful) {
+                emit(Result.Success(response.body()!!))
+            } else {
+                try {
+                    val errorBody = response.errorBody()?.string()
+                    val gson = Gson()
+                    val parsedError = gson.fromJson(errorBody, TwoFactorResponse::class.java)
+//                    val message = parsedError.errors[0].messages[0]
+                    val message = parsedError.errors.first().messages.first()
+                    emit(Result.Error(message))
+                } catch (parseException: Exception) {
+                    logMessage(
+                        TAG,
+                        "Error parsing HTTP exception response: ${parseException.message}"
+                    )
+                    emit(Result.Error("Error parsing HTTP exception response"))
+                }
+            }
+        } catch (e: Exception) {
+            logMessage(TAG, "Error: ${e.message}")
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
+    fun getTwoFactor(): LiveData<Result<TwoFactorResponse>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.getTwoFactor()
             if (response.isSuccessful) {
                 emit(Result.Success(response.body()!!))
             } else {
