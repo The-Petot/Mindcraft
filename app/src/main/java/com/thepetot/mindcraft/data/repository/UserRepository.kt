@@ -7,11 +7,16 @@ import com.google.gson.Gson
 import com.thepetot.mindcraft.data.pref.UserModel
 import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.data.remote.response.ErrorResponse
+import com.thepetot.mindcraft.data.remote.response.challenges.ChallengeData
+import com.thepetot.mindcraft.data.remote.response.challenges.ChallengesResponse
+import com.thepetot.mindcraft.data.remote.response.challenges.ParticipantData
+import com.thepetot.mindcraft.data.remote.response.challenges.QuestionData
 import com.thepetot.mindcraft.data.remote.response.login.LoginBody
 import com.thepetot.mindcraft.data.remote.response.login.LoginResponse
 import com.thepetot.mindcraft.data.remote.response.login.OAuthLoginBody
 import com.thepetot.mindcraft.data.remote.response.logout.LogoutBody
 import com.thepetot.mindcraft.data.remote.response.logout.LogoutResponse
+import com.thepetot.mindcraft.data.remote.response.participations.ParticipationData
 import com.thepetot.mindcraft.data.remote.response.signup.SignupBody
 import com.thepetot.mindcraft.data.remote.response.signup.SignupResponse
 import com.thepetot.mindcraft.data.remote.response.twofactor.TwoFactorBody
@@ -267,6 +272,107 @@ class UserRepository private constructor(
     suspend fun <T> setPreferenceSettings(pref: Preferences.Key<T>, value: T) = userPreference.setPreferenceSettings(pref, value)
     fun <T> getPreferenceSettings(pref: Preferences.Key<T>, defaultValue: T): Flow<T> = userPreference.getPreferenceSettings(pref, defaultValue)
     suspend fun <T> deletePreferenceSettings(pref: Preferences.Key<T>) = userPreference.deletePreferenceSettings(pref)
+
+    fun fetchAllChallenges(): LiveData<Result<List<ChallengeData>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.fetchAllChallenges()
+            if (response.isSuccessful) {
+                emit(Result.Success(response.body() ?: emptyList()))
+            } else {
+                emit(Result.Error("Failed to fetch challenges: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error("An error occurred: ${e.message}"))
+        }
+    }
+
+    fun getChallengeById(challengeId: Int): LiveData<Result<ChallengesResponse>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.getChallengeById(challengeId)
+            if (response.isSuccessful) {
+                emit(Result.Success(response.body()!!))
+            } else {
+                try {
+                    val errorBody = response.errorBody()?.string()
+                    val gson = Gson()
+                    val parsedError = gson.fromJson(errorBody, ChallengesResponse::class.java)
+                    val message = parsedError.message
+                    emit(Result.Error(message ?: "Unknown error"))
+                } catch (parseException: Exception) {
+                    logMessage(
+                        TAG,
+                        "Error parsing HTTP exception response: ${parseException.message}"
+                    )
+                    emit(Result.Error("Error parsing HTTP exception response"))
+                }
+            }
+        } catch (e: Exception) {
+            logMessage(TAG, "Error: ${e.message}")
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
+    fun fetchParticipants(challengeId: Int): LiveData<Result<List<ParticipantData>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.fetchParticipants(challengeId)
+            if (response.isSuccessful && response.body()?.success == true) {
+                emit(Result.Success(response.body()!!.data))
+            } else {
+                val errorMessage = response.body()?.message ?: "Failed to fetch participants"
+                emit(Result.Error(errorMessage))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error("An error occurred: ${e.message}"))
+        }
+    }
+
+    fun fetchQuestions(challengeId: Int): LiveData<Result<List<QuestionData>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.fetchQuestions(challengeId)
+            if (response.isSuccessful && response.body()?.success == true) {
+                emit(Result.Success(response.body()!!.data))
+            } else {
+                val errorMessage = response.body()?.message ?: "Failed to fetch questions"
+                emit(Result.Error(errorMessage))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error("An error occurred: ${e.message}"))
+        }
+    }
+
+    fun fetchAllParticipations(): LiveData<Result<List<ParticipationData>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.fetchAllParticipations()
+            if (response.isSuccessful && response.body()?.success == true) {
+                emit(Result.Success(response.body()!!.data))
+            } else {
+                val errorMessage = response.body()?.message ?: "Failed to fetch participations"
+                emit(Result.Error(errorMessage))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error("An error occurred: ${e.message}"))
+        }
+    }
+
+    fun fetchParticipationById(participationId: Int): LiveData<Result<ParticipationData>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = apiService.fetchParticipationById(participationId)
+            if (response.isSuccessful && response.body()?.success == true) {
+                emit(Result.Success(response.body()!!.data))
+            } else {
+                val errorMessage = response.body()?.message ?: "Failed to fetch participation by ID"
+                emit(Result.Error(errorMessage))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error("An error occurred: ${e.message}"))
+        }
+    }
 
     companion object {
         const val TAG = "UserRepository"
