@@ -139,11 +139,7 @@ class UserRepository private constructor(
             } else {
                 try {
                     val errorBody = response.errorBody()?.string()
-                    val gson = Gson()
-                    val parsedError = gson.fromJson(errorBody, LoginResponse::class.java)
-//                    val message = parsedError.errors[0].messages[0]
-                    val message = parsedError.errors.first().messages.first()
-                    emit(Result.Error(message))
+                    emit(Result.Error(errorBody!!))
                 } catch (parseException: Exception) {
                     logMessage(TAG, "Error parsing HTTP exception response: ${parseException.message}")
                     emit(Result.Error("Error parsing HTTP exception response"))

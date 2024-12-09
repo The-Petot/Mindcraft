@@ -19,8 +19,14 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _loginOTPResult = MediatorLiveData<Result<LoginResponse>?>()
     val loginOTPResult: LiveData<Result<LoginResponse>?> get() = _loginOTPResult
 
+    private val _loginGoogleOTPResult = MediatorLiveData<Result<LoginResponse>?>()
+    val loginGoogleOTPResult: LiveData<Result<LoginResponse>?> get() = _loginGoogleOTPResult
+
     var email: String = ""
     var password: String = ""
+
+    var loginWithOAuth: Boolean = false
+    var googleIdToken: String = ""
 
     fun login(email: String, password: String) {
         val loginBody = LoginBody(password, email, null)
@@ -48,6 +54,19 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
+    fun loginGoogleOTP(token: String, twoFAToken: String? = null) {
+        val oAuthLoginBody = OAuthLoginBody(token, twoFAToken)
+        val source = userRepository.oAuthLogin(oAuthLoginBody)
+        _loginGoogleOTPResult.addSource(source) { result ->
+            _loginGoogleOTPResult.value = result
+
+            // Remove the source when the operation is complete
+            if (result is Result.Success || result is Result.Error) {
+                _loginGoogleOTPResult.removeSource(source)
+            }
+        }
+    }
+
     fun clearLogin() {
         _loginResult.value = null
     }
@@ -56,8 +75,12 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         _loginOTPResult.value = null
     }
 
-    fun oAuthLogin(token: String) {
-        val oAuthLoginBody = OAuthLoginBody(token)
+    fun clearOTPGoogleLogin() {
+        _loginGoogleOTPResult.value = null
+    }
+
+    fun oAuthLogin(token: String, twoFAToken: String? = null) {
+        val oAuthLoginBody = OAuthLoginBody(token, twoFAToken)
         val source = userRepository.oAuthLogin(oAuthLoginBody)
         _loginResult.addSource(source) { result ->
             _loginResult.value = result

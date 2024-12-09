@@ -95,16 +95,23 @@ class LoginActivity : AppCompatActivity() {
                     val tokenError = parsedError.errors.find { it.field == "token" }
                     val passwordError = parsedError.errors.find { it.field == "password" }
                     val email = parsedError.errors.find { it.field == "email" }
+                    val twoFAToken = parsedError.errors.find { it.field == "twoFAToken" }
                     if (tokenError != null) {
+                        viewModel.clearLogin()
                         showOtpDialog()
                     } else if (passwordError != null) {
                         Toast.makeText(this, passwordError.messages.first(), Toast.LENGTH_SHORT).show()
+                        viewModel.clearLogin()
                     } else if (email != null) {
                         Toast.makeText(this, email.messages.first(), Toast.LENGTH_SHORT).show()
+                        viewModel.clearLogin()
+                    } else if (twoFAToken != null) {
+                        viewModel.clearLogin()
+                        showOtpDialog()
                     } else {
                         Toast.makeText(this, parsedError.errors.first().messages.first(), Toast.LENGTH_SHORT).show()
+                        viewModel.clearLogin()
                     }
-                    viewModel.clearLogin()
                 }
                 is Result.Loading -> {
                     binding.progressIndicator.visibility = View.VISIBLE
@@ -149,7 +156,40 @@ class LoginActivity : AppCompatActivity() {
                     viewModel.saveUserData(result.data)
                     SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
                     viewModel.clearOTPLogin()
+                    navigateToMainPage()
+                }
+                null -> {}
+            }
+        }
+
+        viewModel.loginGoogleOTPResult.observe(this) { result ->
+            when (result) {
+                is Result.Error -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
+                    progressBar.visibility = View.INVISIBLE
+                    val gson = Gson()
+                    val parsedError = gson.fromJson(result.error, LoginResponse::class.java)
+                    val tokenError = parsedError.errors.find { it.field == "twoFAToken" }
+                    if (tokenError != null) {
+                        Toast.makeText(this, tokenError.messages.first(), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, parsedError.errors.first().messages.first(), Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+                    viewModel.clearOTPGoogleLogin()
+                }
+                is Result.Loading -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
+                    progressBar.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    val progressBar = dialogView.findViewById<LinearProgressIndicator>(R.id.progress_bar)
                     dialog.dismiss()
+                    progressBar.visibility = View.INVISIBLE
+                    Toast.makeText(this, result.data.message, Toast.LENGTH_SHORT).show()
+                    viewModel.saveUserData(result.data)
+                    SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
+                    viewModel.clearOTPGoogleLogin()
                     navigateToMainPage()
                 }
                 null -> {}
@@ -198,6 +238,7 @@ class LoginActivity : AppCompatActivity() {
                     // TODO: Implement actual login mechanism
                     val email = binding.etEmail.text.toString()
                     val password = binding.etPassword.text.toString()
+                    viewModel.loginWithOAuth = false
                     viewModel.email = email
                     viewModel.password = password
                     viewModel.login(email, password)
@@ -265,6 +306,8 @@ class LoginActivity : AppCompatActivity() {
                     logMessage(TAG, "signInWithCredential:success")
                     val user: FirebaseUser? = auth.currentUser
                     if (user != null) {
+                        viewModel.googleIdToken = idToken
+                        viewModel.loginWithOAuth = true
                         viewModel.oAuthLogin(idToken)
 //                        SharedPreferencesManager.set(applicationContext, USER_LOGGED_IN, true)
 //                        navigateToMainPage()
@@ -289,9 +332,8 @@ class LoginActivity : AppCompatActivity() {
         dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogView)
             .setPositiveButton("Submit", null)
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton("Cancel") { _, _ ->
                 viewModel.clearOTPLogin()
-                dialog.dismiss()
             }
             .create()
 
@@ -305,9 +347,15 @@ class LoginActivity : AppCompatActivity() {
                 otpInputLayout.error = "Please enter a valid 6-digit OTP"
                 otpInputLayout.errorIconDrawable = null
             } else {
-                progressBar.visibility = View.VISIBLE
-                otpInputLayout.error = null
-                viewModel.loginOTP(viewModel.email, viewModel.password, otpCode)
+                if (viewModel.loginWithOAuth) {
+                    progressBar.visibility = View.VISIBLE
+                    otpInputLayout.error = null
+                    viewModel.loginGoogleOTP(viewModel.googleIdToken, otpCode)
+                } else {
+                    progressBar.visibility = View.VISIBLE
+                    otpInputLayout.error = null
+                    viewModel.loginOTP(viewModel.email, viewModel.password, otpCode)
+                }
             }
         }
     }

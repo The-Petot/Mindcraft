@@ -5,5 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class OAuthLoginBody(
 
 	@field:SerializedName("token")
-	val token: String
+	val token: String,
+
+	@field:SerializedName("twoFAToken")
+	val twoFAToken: String? = null
 )
