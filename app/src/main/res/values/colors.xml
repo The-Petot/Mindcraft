@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="background">#141218</color>
+    <color name="myBackground">#121212</color>
+    <color name="myOnSurfaceVariant">#f2f2f2</color>
+    <color name="myOnSurface">#ffffff</color>
+    <color name="myDarkSwitchTrack">#1c1c1c</color>
+    <color name="myActiveIndicator">#0074c7</color>
+    <color name="myCardBackground">#009de0</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="myWhite">#FFFFFFFF</color>
+    <color name="myPrimary">#00A9FF</color>
+    <color name="myPrimaryWithAlpha">#1900A9FF</color>
+    <color name="primary">#00A9FF</color>
+    <color name="secondary">#89CFF3</color>
+    <color name="accent">#A0E9FF</color>
+    <color name="surface">#F8FEFF</color>
+    <color name="container">#b5dbff</color>
+    <color name="containerVariant">#99CEFF</color>
+    <color name="progressIndicator">#0084ff</color>
+
+    <color name="outline">#938F99</color>
+
+    <color name="grey">#D6D6D6</color>
+    <color name="dotsStroke">#919191</color>
+
+    <color name="myLightNavigation">#1D1B20</color>
+    <color name="myWhiteVariant">#e6e6e6</color>
+
 </resources>

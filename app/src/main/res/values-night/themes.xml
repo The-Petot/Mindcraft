@@ -2,8 +2,152 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Mindcraft" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="dotsColor">@color/primary</item>
+        <item name="dotsStrokeColor">@color/grey</item>
+
+        <item name="android:colorBackground">@color/myBackground</item>
+        <item name="android:textColor">@color/myWhite</item>
+
+        <item name="android:autofilledHighlight" tools:targetApi="o">@color/myPrimaryWithAlpha</item>
+
+        <item name="floatingActionButtonStyle">@style/Widget.Mindcraft.FloatingActionButton</item>
+        <item name="linearProgressIndicatorStyle">@style/Widget.Mindcraft.LinearProgressIndicator</item>
+        <item name="textInputOutlinedStyle">@style/Widget.Mindcraft.TextInputLayout.OutlinedBox</item>
+        <item name="materialButtonStyle">@style/Widget.Mindcraft.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Mindcraft.OutlinedButton</item>
+        <item name="bottomNavigationStyle">@style/Widget.Mindcraft.BottomNavigationView</item>
+        <item name="toolbarStyle">@style/Widget.Mindcraft.Toolbar</item>
+        <item name="appBarLayoutStyle">@style/Widget.Mindcraft.AppBarLayout</item>
+        <item name="materialSearchViewStyle">@style/Widget.Mindcraft.SearchView</item>
+        <item name="materialSwitchStyle">@style/Widget.Mindcraft.Switch</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Mindcraft.BottomSheetDialog</item>
+        <item name="radioButtonStyle">@style/Widget.Mindcraft.RadioButton</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Mindcraft.MaterialAlertDialog</item>"
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Mindcraft</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Mindcraft.Button.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Mindcraft.Button.Dialog</item>
+    </style>
+
+    <style name="MaterialAlertDialog.Mindcraft" parent="MaterialAlertDialog.Material3">
+        <item name="backgroundTint">@color/myBackground</item>
+    </style>
+
+    <style name="Widget.Mindcraft.Button.Dialog" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/myPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.Mindcraft.RadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="android:textColor">@color/myWhite</item>
+        <item name="buttonTint">@color/button_tint_dark</item>
+    </style>
+
+    <style name="Widget.Mindcraft.Divider" parent="Widget.Material3.MaterialDivider">
+        <item name="dividerColor">@color/myWhite</item>
+    </style>
+
+    <style name="Widget.Mindcraft.CardView.Filled" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/myCardBackground</item>
+    </style>
+
+    <style name="Widget.Mindcraft.CardView.Outline" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/myCardBackground</item>
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.Mindcraft.BottomSheet</item>
+    </style>
+
+    <style name="Widget.Mindcraft.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/myBackground</item>
+    </style>
+
+    <style name="Widget.Mindcraft.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Mindcraft.Switch</item>
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.Switch" parent="">
+        <item name="colorSurfaceContainerHighest">@color/myDarkSwitchTrack</item>
+        <item name="colorPrimaryContainer">@color/myWhite</item>
+        <item name="colorOnPrimary">@color/myWhite</item>
+        <item name="colorPrimary">@color/myPrimary</item>
+    </style>
+
+    <style name="Widget.Mindcraft.SearchView" parent="Widget.Material3.SearchView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Mindcraft.SearchView</item>
+        <item name="backgroundTint">@color/myBackground</item>
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.SearchView" parent="">
+        <item name="colorControlActivated">@color/progressIndicator</item>
+        <item name="android:textColorHighlight">@color/progressIndicator</item>
+    </style>
+
+    <style name="Widget.Mindcraft.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">@color/myBackground</item>
+        <item name="liftOnScroll">false</item>
+    </style>
+
+    <style name="Widget.Mindcraft.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Mindcraft.Toolbar</item>
+        <item name="navigationIconTint">@color/myWhite</item>
+        <item name="titleTextColor">@color/myWhite</item>
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.Toolbar" parent="">
+        <item name="colorOnSurface">@color/myWhite</item>
+    </style>
+
+    <style name="Widget.Mindcraft.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/myActiveIndicator</item>
+    </style>
+
+    <style name="Widget.Mindcraft.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Mindcraft.BottomNavigationView</item>
+        <item name="backgroundTint">@color/myBackground</item>
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.BottomNavigationView" parent="">
+        <item name="colorOnSecondaryContainer">@color/myOnSurface</item>
+        <item name="colorOnSurface">@color/myOnSurface</item>
+        <item name="colorOnSurfaceVariant">@color/myOnSurfaceVariant</item>
+    </style>
+
+    <style name="CustomTextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/myPrimary</item>
+    </style>
+
+    <style name="Widget.Mindcraft.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/myPrimary</item>
+        <item name="android:textColor">@color/myWhite</item>
+        <item name="iconTint">@color/myWhite</item>
+    </style>
+
+    <style name="Widget.Mindcraft.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/myWhite</item>
+    </style>
+
+    <style name="Widget.Mindcraft.TextInputEditText.OutlinedBox" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:colorControlActivated">@color/myPrimary</item>
+    </style>
+
+    <style name="Widget.Mindcraft.TextInputLayout.OutlinedBox" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Mindcraft.TextInputLayout</item>
+        <item name="hintTextColor">@color/myPrimary</item>
+    </style>
+
+    <style name="ThemeOverlay.Mindcraft.TextInputLayout" parent="">
+        <item name="editTextStyle">@style/Widget.Material3.TextInputEditText.OutlinedBox</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorControlActivated">@color/progressIndicator</item>
+        <item name="android:textColorHighlight">@color/progressIndicator</item>
     </style>
 
     <!--    TODO: Make splash screen icon animated.    -->
@@ -11,5 +155,27 @@
         <item name="windowSplashScreenBackground">?attr/colorSurface</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splashscreen</item>
         <item name="postSplashScreenTheme">@style/Theme.Mindcraft</item>
+    </style>
+
+    <style name="CustomToolbarTitleMain" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/myPrimary</item>
+    </style>
+
+    <style name="CustomToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="Theme.Mindcraft" parent="Base.Theme.Mindcraft" />
+
+    <style name="Widget.Mindcraft.LinearProgressIndicator" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="trackColor">@color/container</item>
+        <item name="indicatorColor">@color/progressIndicator</item>
+    </style>
+
+    <style name="Widget.Mindcraft.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/myPrimary</item>
+        <item name="tint">@color/myWhite</item>
     </style>
 </resources>
