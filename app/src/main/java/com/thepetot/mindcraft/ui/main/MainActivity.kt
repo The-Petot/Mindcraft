@@ -4,19 +4,26 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.databinding.ActivityMainBinding
+import com.thepetot.mindcraft.ui.ViewModelFactory
+import com.thepetot.mindcraft.ui.home.HomeViewModel
 import com.thepetot.mindcraft.utils.logMessage
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel by viewModels<HomeViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +35,8 @@ class MainActivity : AppCompatActivity() {
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
 //            insets
 //        }
+
+        viewModel.refreshToken()
 
         val navView: BottomNavigationView = binding.navView
 

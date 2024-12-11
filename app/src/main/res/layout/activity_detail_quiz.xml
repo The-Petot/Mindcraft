@@ -16,13 +16,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleCentered="true"
-            app:title="Quiz"
-            app:titleTextAppearance="@style/CustomToolbarTitle"
-            android:minHeight="?attr/actionBarSize"
+            app:title="Detail Challenge"
             app:navigationIcon="@drawable/ic_back"/>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
+            style="@style/Widget.Mindcraft.LinearProgressIndicator"
             android:id="@+id/progress_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -155,12 +153,25 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
                 tools:text="15 minutes" />
 
+            <TextView
+                android:id="@+id/tv_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Tags: coding, math, science"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/tv_total_questions"
+                app:layout_constraintStart_toStartOf="@+id/tv_total_questions"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <Button
                 android:id="@+id/btn_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="128dp"
+                android:layout_marginTop="16dp"
                 android:text="Start"
                 android:textStyle="bold"
                 app:icon="@drawable/ic_forward"

@@ -4,16 +4,19 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.thepetot.mindcraft.data.remote.response.logout.LogoutBody
 import com.thepetot.mindcraft.data.remote.response.logout.LogoutResponse
 import com.thepetot.mindcraft.data.remote.response.twofactor.TwoFactorBody
 import com.thepetot.mindcraft.data.remote.response.twofactor.TwoFactorResponse
+import com.thepetot.mindcraft.data.remote.response.user.update.UpdateUserResponse
 import com.thepetot.mindcraft.data.repository.UserRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.thepetot.mindcraft.utils.Result
+import java.io.File
 
 class SettingsViewModel(private val userRepository: UserRepository) : ViewModel() {
     var is2FASwitchChecked: Boolean = false
@@ -82,6 +85,10 @@ class SettingsViewModel(private val userRepository: UserRepository) : ViewModel(
         }
     }
 
+    suspend fun <T> setPreferenceSettingsSuspend(pref: Preferences.Key<T>, value: T) {
+        userRepository.setPreferenceSettings(pref, value)
+    }
+
     fun <T> deletePreferenceSettings(pref: Preferences.Key<T>) {
         viewModelScope.launch {
             userRepository.deletePreferenceSettings(pref)
@@ -91,6 +98,17 @@ class SettingsViewModel(private val userRepository: UserRepository) : ViewModel(
     fun <T> getPreferenceSettings(pref: Preferences.Key<T>, defaultValue: T) = runBlocking {
         userRepository.getPreferenceSettings(pref, defaultValue).first()
     }
+
+    fun getUser() = userRepository.getUserData().asLiveData()
+
+    fun updateUser(
+        userId: Int,
+        image: File? = null,
+        firstName: String? = null,
+        lastName: String? = null,
+        email: String? = null,
+        password: String? = null
+    ): LiveData<Result<UpdateUserResponse>> = userRepository.updateUser(userId, image, firstName, lastName, email, password)
 
     fun deleteDataUser() {
         viewModelScope.launch {

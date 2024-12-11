@@ -2,28 +2,30 @@ package com.thepetot.mindcraft.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
+import com.thepetot.mindcraft.data.remote.response.challenges.test.DataItem
 import com.thepetot.mindcraft.databinding.ItemQuizHistoryBinding
 
 
-class QuizHistoryAdapter(
+class ChallengesAdapter(
     private val listener: OnQuizClickListener
-) : ListAdapter<ListQuizItem, QuizHistoryAdapter.QuizViewHolder>(
+) : PagingDataAdapter<DataItem, ChallengesAdapter.QuizViewHolder>(
     DIFF_CALLBACK
 ) {
 
     interface OnQuizClickListener {
-        fun onQuizClicked(quiz: ListQuizItem)
+        fun onQuizClicked(quiz: DataItem)
     }
 
     class QuizViewHolder(
         private val binding: ItemQuizHistoryBinding,
         private val listener: OnQuizClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(quiz: ListQuizItem) {
+        fun bind(quiz: DataItem) {
             binding.tvTitle.text = quiz.title
             binding.tvDescription.text = quiz.description
 
@@ -40,16 +42,16 @@ class QuizHistoryAdapter(
 
     override fun onBindViewHolder(holder: QuizViewHolder, position: Int) {
         val quiz = getItem(position)
-        holder.bind(quiz)
+        if (quiz != null) holder.bind(quiz)
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListQuizItem>() {
-            override fun areItemsTheSame(oldItem: ListQuizItem, newItem: ListQuizItem): Boolean {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataItem>() {
+            override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: ListQuizItem, newItem: ListQuizItem): Boolean {
+            override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
                 return oldItem == newItem
             }
 

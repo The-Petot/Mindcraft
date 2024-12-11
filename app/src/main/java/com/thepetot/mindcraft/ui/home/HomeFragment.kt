@@ -2,12 +2,12 @@ package com.thepetot.mindcraft.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -17,23 +17,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
+import com.thepetot.mindcraft.data.remote.response.challenges.test.DataItem
 import com.thepetot.mindcraft.databinding.FragmentHomeBinding
-import com.thepetot.mindcraft.ui.adapter.QuizHistoryAdapter
+import com.thepetot.mindcraft.ui.ViewModelFactory
+import com.thepetot.mindcraft.ui.adapter.ChallengesAdapter
+import com.thepetot.mindcraft.ui.adapter.LoadingStateAdapter
 import com.thepetot.mindcraft.ui.adapter.SearchHistoryAdapter
 import com.thepetot.mindcraft.ui.home.quiz.add.AddQuizActivity
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity.Companion.QUIZ_EXTRA
+import com.thepetot.mindcraft.ui.login.LoginViewModel
 import com.thepetot.mindcraft.utils.generateDummyQuizItems
 import com.thepetot.mindcraft.utils.generateSearchHistoryDummy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
+class HomeFragment : Fragment(), ChallengesAdapter.OnQuizClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var quizHistoryAdapter: QuizHistoryAdapter
-    private val viewModel: HomeViewModel by viewModels()
+    private lateinit var challengesAdapter: ChallengesAdapter
+    private val viewModel by viewModels<HomeViewModel> {
+        ViewModelFactory.getInstance(requireContext())
+    }
 
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
@@ -54,6 +60,8 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
         lifecycleScope.launch {
             viewModel.quizHistory = generateDummyQuizItems()
         }
+
+//        viewModel.updateSearchQuery()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { v, insets ->
             val systemBars = insets.getInsets(
@@ -83,7 +91,11 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
             layoutManager = LinearLayoutManager(context)
         }
 
-        searchHistoryAdapter.submitList(generateSearchHistoryDummy())
+        viewModel.getSearchQueries().observe(viewLifecycleOwner) { result ->
+            searchHistoryAdapter.submitList(result.take(15))
+        }
+
+//        searchHistoryAdapter.submitList(generateSearchHistoryDummy())
     }
 
     override fun onDestroyView() {
@@ -91,13 +103,17 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
         _binding = null
     }
 
-    override fun onQuizClicked(quiz: ListQuizItem) {
+    override fun onQuizClicked(quiz: DataItem) {
         val quizDetailIntent = Intent(context, DetailQuizActivity::class.java)
         quizDetailIntent.putExtra(QUIZ_EXTRA, quiz)
         startActivity(quizDetailIntent)
     }
 
     private fun setupSearchView() {
+        if (viewModel.searchState)
+            binding.toolbar.menu.findItem(R.id.action_search).icon =
+                AppCompatResources.getDrawable(requireActivity(), R.drawable.ic_rounded_close)
+
         binding.searchView
             .editText
             .setOnEditorActionListener { textView, actionId, event ->
@@ -108,8 +124,10 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
                         it.description.contains(text, ignoreCase = true) ||
                                 it.title.contains(text, ignoreCase = true)
                     }
-                    quizHistoryAdapter.submitList(filteredList)
+//                    challengesAdapter.submitList(filteredList)
                 }
+                viewModel.insertSearchQuery(text)
+                viewModel.updateSearchQuery(text)
 
                 viewModel.searchState = true
                 binding.toolbar.menu.findItem(R.id.action_search).icon = AppCompatResources.getDrawable(requireActivity(), R.drawable.ic_rounded_close)
@@ -132,7 +150,8 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
                         // Launch coroutine for delay without blocking UI
                         // line val layoutManager will not execute until the delay is finished (that is the reason we are using coroutine here)
                         lifecycleScope.launch {
-                            quizHistoryAdapter.submitList(viewModel.quizHistory)  // Update list
+//                            challengesAdapter.submitList(viewModel.quizHistory)  // Update list
+                            viewModel.updateSearchQuery("")
                             delay(500)  // Sleep for 500 milliseconds (non-blocking)
                             // Scroll smoothly to the top
                             val layoutManager = binding.rvQuiz.layoutManager as? LinearLayoutManager
@@ -153,13 +172,20 @@ class HomeFragment : Fragment(), QuizHistoryAdapter.OnQuizClickListener {
     }
 
     private fun setupQuizHistory() {
-        quizHistoryAdapter = QuizHistoryAdapter(this)
+        challengesAdapter = ChallengesAdapter(this)
         binding.rvQuiz.apply {
-            adapter = quizHistoryAdapter
+            adapter = challengesAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    challengesAdapter.retry()
+                }
+            )
             layoutManager = LinearLayoutManager(context)
         }
 
-        quizHistoryAdapter.submitList(viewModel.quizHistory)
+//        challengesAdapter.submitList(viewModel.quizHistory)
+        viewModel.challenges.observe(viewLifecycleOwner) {
+            challengesAdapter.submitData(lifecycle, it)
+        }
     }
 
     private fun addNewQuiz() {

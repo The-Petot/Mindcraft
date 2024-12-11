@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
     alias(libs.plugins.google.gms.google.services)
 }
 
@@ -36,11 +37,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
+        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
     buildFeatures {
         viewBinding = true
@@ -96,4 +98,11 @@ dependencies {
 
     // Image Cropper
     implementation(libs.android.image.cropper)
+
+    // Room
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.room.paging)
+    ksp(libs.room.compiler)
 }

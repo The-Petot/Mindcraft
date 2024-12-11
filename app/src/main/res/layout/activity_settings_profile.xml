@@ -8,15 +8,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:liftOnScroll="true">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             app:title="Profile"
-            app:titleTextAppearance="@style/CustomToolbarTitle"
             app:navigationIcon="@drawable/ic_back"/>
 
         <com.google.android.material.divider.MaterialDivider

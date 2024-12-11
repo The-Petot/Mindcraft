@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Disabled -->
+    <item android:alpha="@dimen/m3_comp_radio_button_disabled_unselected_icon_opacity"
+        android:color="@color/myBackground"
+        android:state_enabled="false"/>
+    <item android:alpha="@dimen/m3_comp_radio_button_disabled_selected_icon_opacity"
+        android:color="@color/myBackground"
+        android:state_enabled="false" android:state_pressed="true"/>
+
+    <!-- Checked -->
+    <item android:color="@color/myWhite"
+        android:state_pressed="true" android:state_checked="true"/>
+    <item android:color="@color/myWhite"
+        android:state_focused="true" android:state_checked="true"/>
+    <item android:color="@color/myWhite"
+        android:state_hovered="true" android:state_checked="true"/>
+    <item android:color="@color/myWhite"
+        android:state_checked="true"/>
+
+    <!-- Unchecked -->
+    <item android:color="@macro/m3_comp_radio_button_unselected_pressed_icon_color"
+        android:state_pressed="true" android:state_checked="true"/>
+    <item android:color="@macro/m3_comp_radio_button_unselected_focus_icon_color"
+        android:state_focused="true" android:state_checked="true"/>
+    <item android:color="@macro/m3_comp_radio_button_unselected_hover_icon_color"
+        android:state_hovered="true" android:state_checked="true"/>
+    <item android:color="@macro/m3_comp_radio_button_unselected_icon_color"
+        android:state_checked="false"/>
+</selector>

@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object ApiConfig {
     fun getApiService(userPreference: UserPreference): ApiService {
@@ -23,6 +24,7 @@ object ApiConfig {
             val dataUser = runBlocking { userPreference.getUserData().first() }
             val requestHeaders = req.newBuilder()
                 .addHeader("Content-Type", "application/json")
+                .addHeader("Content-Type", "multipart/form-data")
                 .addHeader("X-Session-Id", dataUser.sessionId)
                 .addHeader("X-Refresh-Token", dataUser.refreshToken)
                 .addHeader("Authorization", "Bearer ${dataUser.refreshToken}")
@@ -31,6 +33,10 @@ object ApiConfig {
         }
 
         val client = OkHttpClient.Builder()
+            .readTimeout(120, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .callTimeout(120, TimeUnit.SECONDS)
+            .connectTimeout(120, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
             .build()

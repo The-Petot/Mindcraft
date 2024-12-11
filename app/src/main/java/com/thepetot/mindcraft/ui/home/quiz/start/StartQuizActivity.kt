@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
+
+import com.thepetot.mindcraft.data.remote.response.challenges.questions.QuestionsResponse
+import com.thepetot.mindcraft.data.remote.response.challenges.test.DataItem
 import com.thepetot.mindcraft.databinding.ActivityStartQuizBinding
 import com.thepetot.mindcraft.ui.adapter.QuestionsAdapter
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity.Companion.QUIZ_EXTRA
@@ -28,7 +31,8 @@ import com.thepetot.mindcraft.utils.withDateFormat
 class StartQuizActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStartQuizBinding
-    private var quiz: ListQuizItem? = null
+    private var quiz: DataItem? = null
+    private var questions: QuestionsResponse? = null
     private var timer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,10 +68,17 @@ class StartQuizActivity : AppCompatActivity() {
         }
 
         quiz = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(QUIZ_EXTRA, ListQuizItem::class.java)
+            intent.getParcelableExtra(QUIZ_EXTRA, DataItem::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra(QUIZ_EXTRA) as? ListQuizItem
+            intent.getParcelableExtra(QUIZ_EXTRA) as? DataItem
+        }
+
+        questions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(QUIZ_QUESTIONS, QuestionsResponse::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(QUIZ_QUESTIONS) as? QuestionsResponse
         }
 
         quiz?.let {
@@ -75,11 +86,12 @@ class StartQuizActivity : AppCompatActivity() {
                 tvTitle.text = it.title
                 tvDescription.text = it.description
 //                tvTimer.text = formatSecondsToTimer(it.duration)
-                startTimer(it.duration)
+                startTimer(it.timeSeconds)
             }
         }
 
-        questionsAdapter.submitList(generateDummyQuestions())
+//        questionsAdapter.submitList(generateDummyQuestions())
+        questionsAdapter.submitList(questions?.data)
     }
 
     private fun startTimer(durationInSeconds: Int) {
@@ -153,18 +165,25 @@ class StartQuizActivity : AppCompatActivity() {
 
     private fun calculateScoreAndFinish() {
         val selectedAnswers = (binding.rvQuiz.adapter as QuestionsAdapter).getSelectedAnswers()
-        val questions = generateDummyQuestions() // Replace with actual quiz questions if fetched from server
+//        val questions = generateDummyQuestions() // Replace with actual quiz questions if fetched from server
+        val questions = questions?.data
 
         var correctCount = 0
-        for ((index, question) in questions.withIndex()) {
-            val selectedAnswer = selectedAnswers[index]
-            if (selectedAnswer == question.correctAnswer) {
-                correctCount++
-            }
+        for ((key, value) in selectedAnswers) {
+            println("Key: $key, Value: $value")
+            if (value) correctCount++
         }
 
-        val totalQuestions = questions.size
-        val score = (correctCount.toDouble() / totalQuestions * 100).toInt() // Convert to percentage
+//        var correctCount = 0
+//        for ((index, question) in questions?.withIndex()!!) {
+//            val selectedAnswer = selectedAnswers[index]
+//            if (selectedAnswer == question.answers.any { it.correct }) {
+//                correctCount++
+//            }
+//        }
+
+        val totalQuestions = questions?.size
+        val score = (correctCount.toDouble() / totalQuestions!! * 100).toInt() // Convert to percentage
 
         // Pass the score to the ResultActivity
         val resultIntent = Intent(this, ResultQuizActivity::class.java).apply {
@@ -178,5 +197,9 @@ class StartQuizActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel() // Ensure the timer is canceled to prevent memory leaks
+    }
+
+    companion object {
+        const val QUIZ_QUESTIONS = "quiz_questions"
     }
 }

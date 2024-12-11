@@ -16,10 +16,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleCentered="true"
-            app:title="Quiz"
-            app:titleTextAppearance="@style/CustomToolbarTitle"
-            android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back">
 
             <TextView
@@ -87,12 +83,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_description"/>
+                app:layout_constraintTop_toBottomOf="@+id/tv_description"
+                tools:listitem="@layout/item_quiz"/>
 
             <Button
                 android:id="@+id/btn_submit"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:layout_marginBottom="128dp"
                 android:text="Submit"
                 android:textStyle="bold"

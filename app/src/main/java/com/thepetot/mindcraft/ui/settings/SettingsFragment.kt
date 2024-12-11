@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
 import android.widget.PopupMenu
@@ -24,6 +25,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -454,6 +456,17 @@ class SettingsFragment : Fragment() {
 
     //region profile
     private fun setupProfile() {
+        viewModel.getUser().observe(viewLifecycleOwner) {user ->
+            Glide
+                .with(binding.root.context)
+                .load(user.profilePicture)
+                .placeholder(appR.drawable.img_profile)
+                .error(appR.drawable.img_profile)
+                .into(binding.imgProfile)
+            binding.tvName.text = String.format("${user.firstName} ${user.lastName}")
+            binding.tvEmail.text = user.email
+        }
+
         binding.profile.setOnClickListener { navigateToProfilePage() }
     }
     //endregion

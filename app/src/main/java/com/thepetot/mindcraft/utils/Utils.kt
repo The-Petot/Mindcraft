@@ -3,11 +3,15 @@ package com.thepetot.mindcraft.utils
 import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.exifinterface.media.ExifInterface
 import androidx.viewpager2.widget.ViewPager2
 import com.thepetot.mindcraft.BuildConfig
 import com.thepetot.mindcraft.data.dummy.RankingUserModel
@@ -15,10 +19,73 @@ import com.thepetot.mindcraft.data.dummy.SearchHistoryModel
 import com.thepetot.mindcraft.data.remote.response.ListQuestionsItem
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
 import com.thepetot.mindcraft.data.remote.response.Options
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.random.Random
+
+private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
+private val timeStamp: String = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date())
+private const val MAXIMAL_SIZE = 1000000
+
+fun createCustomTempFile(context: Context): File {
+    val filesDir = context.externalCacheDir
+    return File.createTempFile(timeStamp, ".jpg", filesDir)
+}
+
+fun uriToFile(imageUri: Uri, context: Context): File {
+    val myFile = createCustomTempFile(context)
+    val inputStream = context.contentResolver.openInputStream(imageUri) as InputStream
+    val outputStream = FileOutputStream(myFile)
+    val buffer = ByteArray(1024)
+    var length: Int
+    while (inputStream.read(buffer).also { length = it } > 0) outputStream.write(buffer, 0, length)
+    outputStream.close()
+    inputStream.close()
+    return myFile
+}
+
+fun File.reduceFileImage(): File {
+    val file = this
+    val bitmap = BitmapFactory.decodeFile(file.path).getRotatedBitmap(file)
+    var compressQuality = 100
+    var streamLength: Int
+    do {
+        val bmpStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+        val bmpPicByteArray = bmpStream.toByteArray()
+        streamLength = bmpPicByteArray.size
+        compressQuality -= 5
+    } while (streamLength > MAXIMAL_SIZE)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+    return file
+}
+
+fun Bitmap.getRotatedBitmap(file: File): Bitmap {
+    val orientation = ExifInterface(file).getAttributeInt(
+        ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED
+    )
+    return when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(this, 90F)
+        ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(this, 180F)
+        ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(this, 270F)
+        ExifInterface.ORIENTATION_NORMAL -> this
+        else -> this
+    }
+}
+
+fun rotateImage(source: Bitmap, angle: Float): Bitmap {
+    val matrix = Matrix()
+    matrix.postRotate(angle)
+    return Bitmap.createBitmap(
+        source, 0, 0, source.width, source.height, matrix, true
+    )
+}
 
 fun generateDummyData(count: Int): List<ListQuizItem> {
 
@@ -240,7 +307,7 @@ fun formatSecondsToTimer(seconds: Int): String {
 }
 
 fun String.withDateFormat(): String {
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
     val date = format.parse(this)
     return DateFormat.getDateInstance(DateFormat.FULL).format(date!!)
 }
@@ -305,8 +372,22 @@ fun logMessage(
     }
 }
 
+fun parseTags(input: String): List<String> {
+    return input.split(",") // Split by commas
+        .map { it.trim() }  // Trim whitespace from each element
+        .filter { it.isNotEmpty() } // Optional: Filter out empty strings
+}
+
+fun checkTagsInput(input: String): Boolean {
+    val regex = Regex("^([a-zA-Z0-9\\s]+,)*[a-zA-Z0-9\\s]+$") // Match strings like "word, word, word"
+
+    if (input.isEmpty()) return true
+    return regex.matches(input)
+}
+
 fun logMessage(tag: String, message: String) {
     if (BuildConfig.DEBUG) {
         Log.i(tag, message)
     }
 }
+

@@ -189,16 +189,15 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
+                style="@style/CustomTextView"
                 android:id="@+id/btn_signup"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="4dp"
                 android:paddingVertical="2dp"
                 android:text="@string/signup_underline"
-                android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="@drawable/ripple_rounded_corner"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
                 app:layout_constraintTop_toTopOf="parent" />
 

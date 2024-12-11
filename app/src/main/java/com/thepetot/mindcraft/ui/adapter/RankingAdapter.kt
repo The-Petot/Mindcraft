@@ -6,19 +6,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.data.dummy.RankingUserModel
+import com.thepetot.mindcraft.data.remote.response.user.all_users.DataItem
 import com.thepetot.mindcraft.databinding.ItemUserBinding
 
-class RankingAdapter : ListAdapter<RankingUserModel, RankingAdapter.RankingViewHolder>(DIFF_CALLBACK) {
+class RankingAdapter : ListAdapter<DataItem, RankingAdapter.RankingViewHolder>(DIFF_CALLBACK) {
 
     class RankingViewHolder(private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("DefaultLocale")
-        fun bind(ranking: RankingUserModel) {
-            binding.tvRank.text = String.format("%d", ranking.rank)
-            binding.imgProfile.setImageResource(R.drawable.img_profile)
-            binding.tvName.text = "Dummy user"
-            binding.tvScore.text = "9999"
+        fun bind(users: DataItem) {
+            binding.tvRank.text = String.format("%d", users.currentRank)
+//            binding.imgProfile.setImageResource(R.drawable.img_profile)
+            Glide
+                .with(binding.root.context)
+                .load(users.profileImgUrl)
+                .placeholder(R.drawable.img_profile)
+                .error(R.drawable.img_profile)
+                .into(binding.imgProfile)
+            binding.tvName.text = String.format("%s %s", users.firstName, users.lastName)
+            binding.tvScore.text = users.totalScore.toString()
         }
     }
 
@@ -33,17 +41,17 @@ class RankingAdapter : ListAdapter<RankingUserModel, RankingAdapter.RankingViewH
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RankingUserModel>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataItem>() {
             override fun areItemsTheSame(
-                oldItem: RankingUserModel,
-                newItem: RankingUserModel
+                oldItem: DataItem,
+                newItem: DataItem
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: RankingUserModel,
-                newItem: RankingUserModel
+                oldItem: DataItem,
+                newItem: DataItem
             ): Boolean {
                 return oldItem == newItem
             }

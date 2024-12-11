@@ -45,6 +45,7 @@
             app:srcCompat="@drawable/ic_app_character" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
+            style="@style/Widget.Mindcraft.LinearProgressIndicator"
             android:id="@+id/progress_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -207,16 +208,15 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
+                style="@style/CustomTextView"
                 android:id="@+id/btn_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ripple_rounded_corner"
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingHorizontal="4dp"
                 android:paddingVertical="2dp"
                 android:text="@string/login_underline"
-                android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.thepetot.mindcraft.data.dummy.SearchHistoryModel
+import com.thepetot.mindcraft.data.local.database.SearchHistoryEntity
 import com.thepetot.mindcraft.databinding.ItemSearchHistoryBinding
 
-class SearchHistoryAdapter : ListAdapter<SearchHistoryModel, SearchHistoryAdapter.SearchHistoryViewHolder>(DIFF_CALLBACK) {
+class SearchHistoryAdapter : ListAdapter<SearchHistoryEntity, SearchHistoryAdapter.SearchHistoryViewHolder>(DIFF_CALLBACK) {
 
     class SearchHistoryViewHolder(private val binding: ItemSearchHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(history: SearchHistoryModel) {
+        fun bind(history: SearchHistoryEntity) {
             binding.tvQuery.text = history.query
         }
     }
@@ -30,17 +30,17 @@ class SearchHistoryAdapter : ListAdapter<SearchHistoryModel, SearchHistoryAdapte
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SearchHistoryModel>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SearchHistoryEntity>() {
             override fun areItemsTheSame(
-                oldItem: SearchHistoryModel,
-                newItem: SearchHistoryModel
+                oldItem: SearchHistoryEntity,
+                newItem: SearchHistoryEntity
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: SearchHistoryModel,
-                newItem: SearchHistoryModel
+                oldItem: SearchHistoryEntity,
+                newItem: SearchHistoryEntity
             ): Boolean {
                 return oldItem == newItem
             }
