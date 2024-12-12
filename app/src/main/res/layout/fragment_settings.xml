@@ -213,7 +213,6 @@
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:focusable="true"
-                android:visibility="gone"
                 android:background="?attr/selectableItemBackground">
 
                 <ImageView
