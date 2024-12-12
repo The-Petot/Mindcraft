@@ -9,7 +9,7 @@ import com.thepetot.mindcraft.data.remote.response.challenges.test.DataItem
 
 @Dao
 interface ChallengesDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertChallenges(quote: List<DataItem>)
 
     @Query("SELECT * FROM challenges ORDER BY id DESC")

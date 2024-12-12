@@ -19,6 +19,8 @@
     <color name="container">#b5dbff</color>
     <color name="containerVariant">#99CEFF</color>
     <color name="progressIndicator">#0084ff</color>
+    <color name="myGreen">#4004FF00</color>
+    <color name="myRed">#A6FF0000</color>
 
     <color name="outline">#938F99</color>
 
