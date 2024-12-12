@@ -6,6 +6,15 @@ MindCraft is an innovative platform addressing educational challenges by creatin
 ![Static Badge](https://img.shields.io/badge/build-1.2.0-green)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+## Preview
+**Dark Theme**
+
+<img src="https://drive.google.com/file/d/1Fovm4BSzm3TXKYSPCKKOp0X5SoRzQyU-/view?usp=sharing" width="512">
+
+**Light Theme**
+
+
+
 ## Features
 - AI-based quiz generator
 - Gamification with leaderboards and scores
