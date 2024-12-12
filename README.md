@@ -9,11 +9,11 @@ MindCraft is an innovative platform addressing educational challenges by creatin
 ## Preview
 **Dark Theme**
 
-<img src="https://drive.google.com/file/d/1Fovm4BSzm3TXKYSPCKKOp0X5SoRzQyU-/view?usp=sharing" width="512">
+<img src="assets/Screenshot_20241212_191457.png" width="192"><img src="assets/Screenshot_20241212_191550.png" width="192"><img src="assets/Screenshot_20241212_191628.png" width="192"><img src="assets/Screenshot_20241212_191651.png" width="192"><img src="assets/Screenshot_20241212_191710.png" width="192">
 
 **Light Theme**
 
-
+<img src="assets/Screenshot_20241212_191444.png" width="192"><img src="assets/Screenshot_20241212_191522.png" width="192"><img src="assets/Screenshot_20241212_191617.png" width="192"><img src="assets/Screenshot_20241212_191640.png" width="192"><img src="assets/Screenshot_20241212_191702.png" width="192">
 
 ## Features
 - AI-based quiz generator
