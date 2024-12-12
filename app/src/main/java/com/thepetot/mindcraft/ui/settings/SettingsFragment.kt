@@ -3,6 +3,7 @@ package com.thepetot.mindcraft.ui.settings
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.credentials.ClearCredentialStateRequest
@@ -398,7 +401,26 @@ class SettingsFragment : Fragment() {
         // Set switch state listener
         switchNotification.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setPreferenceSettings(UserPreference.NOTIFICATION_ENABLED_KEY, isChecked)
+            val done = viewModel.getPreferenceSettings(UserPreference.NOTIFICATION_ONE, false)
+            if (isChecked && !done) {
+                showNotificationOnce()
+            }
         }
+    }
+
+    private fun showNotificationOnce() {
+        viewModel.setPreferenceSettings(UserPreference.NOTIFICATION_ONE, true)
+        val title = "Mindcraft is the feature of quizzes!"
+        val message = "Thanks for using this app, we hope you enjoy it!"
+        val notificationBuilder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_mindcraft_foreground)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setAutoCancel(true)
+
+//                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
     }
 
     private fun toggleNotificationSwitch() {
