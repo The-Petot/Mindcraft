@@ -47,7 +47,7 @@ class HomeViewModel(
 
     fun getSearchQueries() = challengesRepository.getSearchQueries()
 
-    fun updateSearchQuery(query: String? = null) {
+    fun updateSearchQuery(query: String = "") {
         _searchQuery.value = query
     }
 }

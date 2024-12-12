@@ -12,7 +12,7 @@ interface ChallengesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChallenges(quote: List<DataItem>)
 
-    @Query("SELECT * FROM challenges")
+    @Query("SELECT * FROM challenges ORDER BY id DESC")
     fun getAllChallenges(): PagingSource<Int, DataItem>
 
     @Query("""
