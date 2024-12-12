@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "216954170526-mrd50m41bfq24pj2uaj4m6s6e6mmii45.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thepetot.mindcraft",
+            "certificate_hash": "136f244ea349733a6f4e02c244b4fae1dc37687d"
+          }
+        },
+        {
           "client_id": "216954170526-d7t2apoqoqq6uspm6sd2vhoi927fjtdn.apps.googleusercontent.com",
           "client_type": 3
         }
