@@ -62,6 +62,7 @@ class HomeFragment : Fragment(), ChallengesAdapter.OnQuizClickListener {
         }
 
 //        viewModel.updateSearchQuery()
+//        viewModel.updateSearchQuery("")
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { v, insets ->
             val systemBars = insets.getInsets(
@@ -96,6 +97,11 @@ class HomeFragment : Fragment(), ChallengesAdapter.OnQuizClickListener {
         }
 
 //        searchHistoryAdapter.submitList(generateSearchHistoryDummy())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateSearchQuery(viewModel.searchQuery.value)
     }
 
     override fun onDestroyView() {
@@ -151,7 +157,7 @@ class HomeFragment : Fragment(), ChallengesAdapter.OnQuizClickListener {
                         // line val layoutManager will not execute until the delay is finished (that is the reason we are using coroutine here)
                         lifecycleScope.launch {
 //                            challengesAdapter.submitList(viewModel.quizHistory)  // Update list
-                            viewModel.updateSearchQuery("")
+                            viewModel.updateSearchQuery()
                             delay(500)  // Sleep for 500 milliseconds (non-blocking)
                             // Scroll smoothly to the top
                             val layoutManager = binding.rvQuiz.layoutManager as? LinearLayoutManager

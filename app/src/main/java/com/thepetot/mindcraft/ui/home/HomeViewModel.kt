@@ -22,8 +22,8 @@ class HomeViewModel(
     var quizHistory: List<ListQuizItem> = listOf()
     var searchState: Boolean = false
 
-    private val _searchQuery = MutableLiveData("")
-    val searchQuery: LiveData<String> get() = _searchQuery
+    private val _searchQuery = MutableLiveData<String?>(null)
+    val searchQuery: LiveData<String?> get() = _searchQuery
 
 //    val challenges: LiveData<PagingData<DataItem>> =
 //        challengesRepository.getChallenges().cachedIn(viewModelScope)
@@ -47,7 +47,7 @@ class HomeViewModel(
 
     fun getSearchQueries() = challengesRepository.getSearchQueries()
 
-    fun updateSearchQuery(query: String = "") {
+    fun updateSearchQuery(query: String? = null) {
         _searchQuery.value = query
     }
 }

@@ -13,14 +13,20 @@ import com.thepetot.mindcraft.databinding.ItemQuizBinding
 
 class QuestionsAdapter : ListAdapter<DataItem, QuestionsAdapter.QuestionsViewHolder>(DIFF_CALLBACK) {
 
-    private val selectedAnswers = mutableMapOf<Int, Boolean>() // Map to store user's selected answers
+    private val selectedAnswers: MutableMap<Int, Int?> = mutableMapOf(
+        0 to null,
+        1 to null,
+        2 to null,
+        3 to null,
+        4 to null
+    ) // Map to store user's selected answers
 
     class QuestionsViewHolder(private val binding: ItemQuizBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("DefaultLocale")
         fun bind(
             question: DataItem,
             position: Int,
-            onAnswerSelected: (Int, Boolean) -> Unit
+            onAnswerSelected: (Int, Int?) -> Unit
         ) {
             binding.tvQuestion.text = question.question
             binding.tvNumber.text = String.format("%d", position + 1)
@@ -29,16 +35,36 @@ class QuestionsAdapter : ListAdapter<DataItem, QuestionsAdapter.QuestionsViewHol
             binding.rbAnswer3.text = question.answers[2].answer
             binding.rbAnswer4.text = question.answers[3].answer
 
+//            when (question.checked) {
+//                0 -> binding.rbAnswer1.isChecked = true
+//                1 -> binding.rbAnswer2.isChecked = true
+//                2 -> binding.rbAnswer3.isChecked = true
+//                3 -> binding.rbAnswer4.isChecked = true
+//            }
+
             // Set up RadioGroup listener
             binding.rgAnswer.setOnCheckedChangeListener { _, checkedId ->
-                val selectedAnswer = when (checkedId) {
-                    binding.rbAnswer1.id -> question.answers[0].correct
-                    binding.rbAnswer2.id -> question.answers[1].correct
-                    binding.rbAnswer3.id -> question.answers[2].correct
-                    binding.rbAnswer4.id -> question.answers[3].correct
-                    else -> false
+                var option: Int? = null
+                var correct = false
+                when (checkedId) {
+                    binding.rbAnswer1.id -> {
+                        correct = question.answers[0].correct
+                        option = 0
+                    }
+                    binding.rbAnswer2.id -> {
+                        correct = question.answers[1].correct
+                        option = 1
+                    }
+                    binding.rbAnswer3.id -> {
+                        correct = question.answers[2].correct
+                        option = 2
+                    }
+                    binding.rbAnswer4.id -> {
+                        correct = question.answers[3].correct
+                        option = 3
+                    }
                 }
-                onAnswerSelected(position, selectedAnswer) // Pass selected answer to the activity
+                onAnswerSelected(position, option) // Pass selected answer to the activity
             }
         }
     }
@@ -55,7 +81,7 @@ class QuestionsAdapter : ListAdapter<DataItem, QuestionsAdapter.QuestionsViewHol
         }
     }
 
-    fun getSelectedAnswers(): Map<Int, Boolean> {
+    fun getSelectedAnswers(): Map<Int, Int?> {
         return selectedAnswers
     }
 

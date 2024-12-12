@@ -23,7 +23,7 @@ class ChallengesRepository private constructor(
     private val challengesDatabase: ChallengesDatabase
 ) {
 
-    fun getChallenges(query: String): LiveData<PagingData<DataItem>> {
+    fun getChallenges(query: String? = null): LiveData<PagingData<DataItem>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
@@ -32,9 +32,12 @@ class ChallengesRepository private constructor(
             remoteMediator = ChallengesRemoteMediator(challengesDatabase, apiService, query),
             pagingSourceFactory = {
 //                QuotePagingSource(apiService)
-//                if (query != null) challengesDatabase.challengesDao().getChallengesByQuery(query)
-//                else challengesDatabase.challengesDao().getAllChallenges()
-//                challengesDatabase.challengesDao().getChallengesByQuery(query)
+//                if (query != null) {
+//                    challengesDatabase.challengesDao().getChallengesByQuery(query)
+//                }
+//                else {
+//                    challengesDatabase.challengesDao().getAllChallenges()
+//                }
                 challengesDatabase.challengesDao().getAllChallenges()
             }
         ).liveData

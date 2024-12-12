@@ -22,6 +22,9 @@ data class DataItem(
 	@field:SerializedName("id")
 	val id: Int,
 
+	@field:SerializedName("checked")
+	var checked: Int? = null,
+
 	@field:SerializedName("explanation")
 	val explanation: String
 ) : Parcelable

@@ -12,13 +12,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.data.remote.response.ListQuizItem
+import com.thepetot.mindcraft.data.remote.response.challenges.questions.QuestionsResponse
 import com.thepetot.mindcraft.data.remote.response.challenges.test.DataItem
 import com.thepetot.mindcraft.databinding.ActivityResultQuizBinding
 import com.thepetot.mindcraft.ui.ViewModelFactory
+import com.thepetot.mindcraft.ui.adapter.ResultAdapter
 import com.thepetot.mindcraft.ui.home.quiz.add.AddQuizViewModel
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity.Companion.QUIZ_EXTRA
 import com.thepetot.mindcraft.ui.main.MainActivity
@@ -33,6 +36,7 @@ class ResultQuizActivity : AppCompatActivity() {
         ViewModelFactory.getInstance(this)
     }
     private var score: Int = 0
+    private var questionsMod: QuestionsResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +65,11 @@ class ResultQuizActivity : AppCompatActivity() {
     @SuppressLint("DefaultLocale")
     private fun setupView() {
 
+        val questionsAdapter = ResultAdapter()
+        binding.rvQuizDetail.apply {
+            adapter = questionsAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
 
         score = intent.getIntExtra(QUIZ_SCORE, 0)
 
@@ -69,6 +78,13 @@ class ResultQuizActivity : AppCompatActivity() {
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(QUIZ_EXTRA) as? DataItem
+        }
+
+        questionsMod = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(QUIZ_MOD, QuestionsResponse::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(QUIZ_MOD) as? QuestionsResponse
         }
 
         quiz?.let {
@@ -81,6 +97,8 @@ class ResultQuizActivity : AppCompatActivity() {
                 tvDateCreated.text = it.createdAt.withDateFormat()
             }
         }
+
+        questionsAdapter.submitList(questionsMod?.data)
     }
 
     private fun setupButton() {
@@ -134,5 +152,6 @@ class ResultQuizActivity : AppCompatActivity() {
 
     companion object {
         const val QUIZ_SCORE = "quiz_score"
+        const val QUIZ_MOD = "quiz_mod"
     }
 }

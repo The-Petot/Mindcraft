@@ -22,6 +22,7 @@ import com.thepetot.mindcraft.databinding.ActivityStartQuizBinding
 import com.thepetot.mindcraft.ui.adapter.QuestionsAdapter
 import com.thepetot.mindcraft.ui.home.quiz.detail.DetailQuizActivity.Companion.QUIZ_EXTRA
 import com.thepetot.mindcraft.ui.home.quiz.result.ResultQuizActivity
+import com.thepetot.mindcraft.ui.home.quiz.result.ResultQuizActivity.Companion.QUIZ_MOD
 import com.thepetot.mindcraft.ui.home.quiz.result.ResultQuizActivity.Companion.QUIZ_SCORE
 import com.thepetot.mindcraft.utils.formatDuration
 import com.thepetot.mindcraft.utils.formatSecondsToTimer
@@ -166,13 +167,30 @@ class StartQuizActivity : AppCompatActivity() {
     private fun calculateScoreAndFinish() {
         val selectedAnswers = (binding.rvQuiz.adapter as QuestionsAdapter).getSelectedAnswers()
 //        val questions = generateDummyQuestions() // Replace with actual quiz questions if fetched from server
-        val questions = questions?.data
+        val questionss = questions?.data
+
+        val correctAnswers: MutableMap<Int, MutableList<Pair<Int, Boolean>>> = mutableMapOf()
+
+        if (questionss != null) {
+            for ((number, question) in questionss.withIndex()) {
+                val option = question.answers
+                correctAnswers[number] = mutableListOf(
+                    Pair(0, option[0].correct),
+                    Pair(1, option[1].correct),
+                    Pair(2, option[2].correct),
+                    Pair(3, option[3].correct)
+                )
+            }
+        }
+
+        println(correctAnswers)
+        println(selectedAnswers)
 
         var correctCount = 0
-        for ((key, value) in selectedAnswers) {
-            println("Key: $key, Value: $value")
-            if (value) correctCount++
-        }
+//        for ((key, value) in selectedAnswers) {
+//            println("Key: ${key.toString()}, Value: $value")
+//            if (value) correctCount++
+//        }
 
 //        var correctCount = 0
 //        for ((index, question) in questions?.withIndex()!!) {
@@ -182,13 +200,31 @@ class StartQuizActivity : AppCompatActivity() {
 //            }
 //        }
 
-        val totalQuestions = questions?.size
-        val score = (correctCount.toDouble() / totalQuestions!! * 100).toInt() // Convert to percentage
+        for ((index, question) in questionss?.withIndex()!!) {
+            val correctIndex = question.answers.indexOfFirst { it.correct }
+            val selectedAnswer = selectedAnswers[index]
+            if (selectedAnswer == correctIndex) {
+                correctCount++
+            }
+        }
+
+        val totalQuestions = questionss.size
+        val score = (correctCount.toDouble() / totalQuestions * 100).toInt() // Convert to percentage
+
+
+//        for (question in questions) {
+//            question.checked = selectedAnswers[questions.indexOf(question)] ?: -1
+//        }
+
+        for ((index, question) in questions?.data?.withIndex()!!) {
+            question.checked = selectedAnswers[index]
+        }
 
         // Pass the score to the ResultActivity
         val resultIntent = Intent(this, ResultQuizActivity::class.java).apply {
             putExtra(QUIZ_EXTRA, quiz)
             putExtra(QUIZ_SCORE, score)
+            putExtra(QUIZ_MOD, questions)
         }
         startActivity(resultIntent)
         finish()

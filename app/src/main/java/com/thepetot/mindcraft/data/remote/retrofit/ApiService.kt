@@ -84,7 +84,7 @@ interface ApiService {
     suspend fun getChallengesWithPage(
         @Query("offset") page: Int,
         @Query("limit") size: Int,
-        @Query("search") query: String
+        @Query("search") query: String?
     ): GetChallengesResponse
 
     @GET("challenges/{challengeId}/questions")
