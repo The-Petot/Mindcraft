@@ -23,6 +23,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -32,6 +34,9 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.thepetot.mindcraft.R
 import com.thepetot.mindcraft.data.pref.UserPreference
 import com.thepetot.mindcraft.data.remote.response.twofactor.TwoFactorResponse
@@ -53,6 +58,8 @@ class SettingsFragment : Fragment() {
     private val viewModel by viewModels<SettingsViewModel> {
         ViewModelFactory.getInstance(requireActivity())
     }
+
+    private lateinit var auth: FirebaseAuth
 
     // profile
     private lateinit var profile: ConstraintLayout
@@ -112,6 +119,8 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        auth = Firebase.auth
+
         profile = binding.profile
 
         twoStepVerification = binding.twoStepVerification
@@ -423,8 +432,14 @@ class SettingsFragment : Fragment() {
     private fun setupLogout() {
         binding.btnLogout.setOnClickListener {
             progressBar.visibility = View.VISIBLE
-            val userId = viewModel.getPreferenceSettings(UserPreference.USERID_KEY, 0)
-            viewModel.logout(userId)
+            lifecycleScope.launch {
+                val credentialManager = CredentialManager.create(requireContext())
+
+                auth.signOut()
+                credentialManager.clearCredentialState(ClearCredentialStateRequest())
+                val userId = viewModel.getPreferenceSettings(UserPreference.USERID_KEY, 0)
+                viewModel.logout(userId)
+            }
         }
 
         viewModel.logoutResult.observe(viewLifecycleOwner) { result ->
